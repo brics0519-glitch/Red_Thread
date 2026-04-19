@@ -63,19 +63,26 @@ $(document).ready(function () {
     /* ─────────────────────────
        SMOOTH SCROLL
     ───────────────────────── */
-    $nav.find('a, .top_button a').on('click', function (e) {
+    /* nav 링크 스크롤 */
+    $nav.find('a').on('click', function (e) {
         const target = $(this).attr('href');
-
         if (!target || target.charAt(0) !== '#') return;
         const $target = $(target);
-
         if (!$target.length) return;
-
         e.preventDefault();
-
         $('html, body').animate({
             scrollTop: $target.offset().top - navHeight + 2
         }, 650);
+    });
+
+    /* top button 스크롤 — nav 바깥에 있으므로 별도 바인딩 */
+    $topButton.find('a').on('click', function (e) {
+        const target = $(this).attr('href');
+        if (!target || target.charAt(0) !== '#') return;
+        const $target = $(target);
+        if (!$target.length) return;
+        e.preventDefault();
+        $('html, body').animate({ scrollTop: 0 }, 650);
     });
 
     /* ─────────────────────────
