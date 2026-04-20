@@ -172,3 +172,15 @@ $(document).ready(function () {
         toggleTopButton();
     });
 });
+// video click play
+$(document).on('click', '.video-click', function () {
+    const video = $(this).find('video').get(0);
+
+    if (video.paused) {
+        video.play();
+        $(this).addClass('playing');
+    } else {
+        video.pause();
+        $(this).removeClass('playing');
+    }
+});
