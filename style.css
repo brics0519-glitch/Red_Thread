@@ -171,15 +171,15 @@ header.navbar-fixed-top {
 nav ul {
     display: flex;
     align-items: center;
-    gap: 0;
+    gap: 6px;
 }
 
 nav li a {
     position: relative;
     display: inline-block;
-    padding: 0.45rem 1.05rem;
+    padding: 0.45rem 2.05rem;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 0.86rem;
+    font-size: 1.05rem;
     font-weight: 400;
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -219,8 +219,8 @@ nav li a.active::after {
 }
 
 /* 기존 장식선 제거 */
-.section::before,
-.section::after,
+.section:not(#footer)::before,
+.section:not(#footer)::after,
 .section .container::after,
 .home-vline,
 .home-hline,
@@ -568,11 +568,6 @@ nav li a.active::after {
     color: var(--red);
 }
 
-.wide-title {
-    font-size: clamp(2rem, 3vw, 2.8rem);
-    margin-bottom: 16px;
-    line-height: 1.04;
-}
 
 .wide-desc {
     font-size: 1.02rem;
@@ -629,30 +624,14 @@ nav li a.active::after {
     border-color: var(--red);
 }
 
-/* ─────────────────────────
-   CLOSING
-───────────────────────── */
-.closing-section {
-    padding: 160px 0 130px;
-    background: var(--bg);
-}
-
-.closing-inner {
-    max-width: 760px;
-}
-
-.closing-text {
+.contact-closing {
+    margin-top: 34px;
+    max-width: 420px;
     font-family: 'Cormorant Garamond', 'Noto Serif KR', serif;
-    font-size: clamp(2.1rem, 3.8vw, 3.4rem);
-    font-weight: 400;
-    line-height: 1.28;
+    font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+    line-height: 1.35;
     letter-spacing: -0.02em;
-    margin-bottom: 1rem;
-}
-
-.closing-sub {
-    color: var(--text-strong);
-    font-size: 1.06rem;
+    color: var(--text);
 }
 
 /* ─────────────────────────
@@ -769,21 +748,15 @@ nav li a.active::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: url("./img/thread-bg.png") no-repeat center top;
-    background-size: 900px auto;
+    background: url("./img/footer-bg.png") no-repeat center top;
+    background-size: cover;
     z-index: 0;
     opacity: 0.9;
 }
 
 /* 🔥 위쪽 자연스럽게 사라지게 */
 #footer::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    width: 100%;
-    height: 140px;
-    background: linear-gradient(var(--bg), transparent);
-    z-index: 0;
+    display: none;
 }
 
 /* 내용 위로 */
@@ -887,7 +860,12 @@ nav li a.active::after {
     #footer::before {
         background-size: 700px auto;
     }
+    nav li a {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
+    }
 }
+
 
 @media (max-width: 600px) {
 
@@ -967,7 +945,7 @@ nav li a.active::after {
 /* video 태그 전용 래퍼 (aspect-ratio 방식) */
 .video-embed-wrap--native {
     padding-bottom: 0;
-    aspect-ratio: 3 / 2;
+    aspect-ratio: 16 / 9;
     background: #000;
 }
 
@@ -1092,4 +1070,171 @@ nav li a.active::after {
 #detail .wide-project-list,
 #cardnews .wide-project-list {
     gap: 80px;
+}
+/* ─────────────────────────
+   DETAIL / CARDNEWS SPLIT LAYOUT
+───────────────────────── */
+#detail .detail-split,
+#cardnews .detail-split {
+    display: grid;
+    grid-template-columns: 1.45fr 0.55fr;
+    gap: 56px;
+    align-items: center;
+}
+
+#detail .detail-split.reverse,
+#cardnews .detail-split.reverse {
+    grid-template-columns: 0.55fr 1.45fr;
+}
+
+#detail .detail-split.reverse .wide-project-image,
+#cardnews .detail-split.reverse .wide-project-image {
+    order: 2;
+}
+
+#detail .detail-split.reverse .detail-side,
+#cardnews .detail-split.reverse .detail-side {
+    order: 1;
+}
+
+#detail .wide-project-image,
+#cardnews .wide-project-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: auto;
+    overflow: visible;
+}
+
+#detail .wide-project-image img,
+#cardnews .wide-project-image img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 780px;
+    height: auto;
+    margin: 0 auto;
+    object-fit: contain;
+    object-position: center;
+}
+
+.detail-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100%;
+}
+
+#detail .detail-side .wide-title,
+#cardnews .detail-side .wide-title {
+    margin-bottom: 0;
+}
+
+/* ─────────────────────────
+   CONTACT
+───────────────────────── */
+.contact-section {
+    padding-top: 140px;
+    padding-bottom: 140px;
+}
+
+.contact-layout {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 56px;
+    align-items: start;
+}
+
+.contact-info {
+    padding-top: 10px;
+}
+
+.contact-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin-bottom: 14px;
+}
+
+.contact-id {
+    display: inline-block;
+    font-family: 'Cormorant Garamond', 'Noto Serif KR', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.1;
+    color: var(--text);
+    border-bottom: 1px solid rgba(31, 31, 31, 0.14);
+    padding-bottom: 8px;
+    transition: color .25s ease, border-color .25s ease;
+}
+
+.contact-id:hover {
+    color: var(--red);
+    border-color: var(--red);
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.contact-thumb {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--bg-soft);
+}
+
+.contact-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ─────────────────────────
+   RESPONSIVE
+───────────────────────── */
+@media (max-width: 1200px) {
+    #detail .detail-split,
+    #detail .detail-split.reverse,
+    #cardnews .detail-split,
+    #cardnews .detail-split.reverse {
+        grid-template-columns: 1fr 1fr;
+        gap: 36px;
+    }
+}
+
+@media (max-width: 900px) {
+    #detail .detail-split,
+    #detail .detail-split.reverse,
+    #cardnews .detail-split,
+    #cardnews .detail-split.reverse,
+    .contact-layout {
+        grid-template-columns: 1fr;
+    }
+
+    #detail .detail-split.reverse .wide-project-image,
+    #cardnews .detail-split.reverse .wide-project-image,
+    #detail .detail-split.reverse .detail-side,
+    #cardnews .detail-split.reverse .detail-side {
+        order: initial;
+    }
+
+    .contact-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    #detail .wide-project-image img,
+    #cardnews .wide-project-image img {
+        max-height: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
 }
