@@ -1216,7 +1216,32 @@ nav li a.active::after {
     object-fit: cover;
     display: block;
 }
+.contact-thumb {
+    position: relative;
+    overflow: hidden;
+}
 
+.contact-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.08em;
+    color: #fff;
+
+    background: rgba(0,0,0,0.35);
+
+    opacity: 0;
+    transition: opacity .35s ease;
+}
+
+.contact-thumb:hover .contact-overlay {
+    opacity: 1;
+}
 /* ─────────────────────────
    RESPONSIVE
 ───────────────────────── */
