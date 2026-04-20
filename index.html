@@ -146,7 +146,7 @@
 
                 <article class="wide-project" data-aos="fade-up">
                     <div class="wide-project-image">
-                        <img src="./img/project1-1.jpg" alt="Tangles">
+                        <img src="./img/project1-1.png" alt="Tangles">
                     </div>
                     <div class="wide-project-content">
                         <span class="wide-label">Brand Website</span>
@@ -158,13 +158,14 @@
                         <div class="wide-buttons">
                             <a href="https://minjae264.github.io/TANGLES/" target="_blank" rel="noopener"
                                 class="wide-btn">View Website</a>
+                            <button class="wide-btn" onclick="openEbookModal()">상세기술서</button>
                         </div>
                     </div>
                 </article>
 
                 <article class="wide-project reverse" data-aos="fade-up">
                     <div class="wide-project-image">
-                        <img src="./img/project1-2.jpg" alt="노랑통닭 리디자인">
+                        <img src="./img/project1-2.png" alt="노랑통닭 리디자인">
                     </div>
                     <div class="wide-project-content">
                         <span class="wide-label">Brand Website</span>
@@ -304,7 +305,7 @@
                     <img src="./img/cardnews1.jpg" alt="카드뉴스 1">
                 </div>
                 <div class="wide-project-content detail-side">
-                    <span class="wide-label">Card News</span>
+                    <span class="wide-label">세계 간염의 날</span>
                 </div>
             </article>
 
@@ -313,7 +314,7 @@
                     <img src="./img/cardnews2.jpg" alt="카드뉴스 2">
                 </div>
                 <div class="wide-project-content detail-side">
-                    <span class="wide-label">Card News</span>
+                    <span class="wide-label">정부혁신 추진전략</span>
                 </div>
             </article>
 
@@ -351,6 +352,200 @@
     </div>
 </section>
 
+
+    <!-- EBOOK MODAL -->
+    <div id="ebookModal" style="display:none; position:fixed; inset:0; background:rgba(10,10,10,0.88); z-index:99999; align-items:center; justify-content:center; flex-direction:column;">
+
+        <!-- 상단 컨트롤 바 -->
+        <div id="ebookBar" style="
+            display:flex; align-items:center; justify-content:space-between;
+            width:100%; max-width:1400px;
+            padding: 0 12px 10px;
+            gap: 16px;
+        ">
+            <!-- 이전 버튼 -->
+            <button onclick="ebookPrev()" id="btnPrev" title="이전 페이지 (←)" style="
+                font-family:'Cormorant Garamond',serif;
+                font-size:0.92rem; letter-spacing:0.1em;
+                color:rgba(255,255,255,0.55); background:transparent;
+                border:1px solid rgba(255,255,255,0.18);
+                padding:7px 20px; cursor:pointer;
+                transition:all .22s ease;
+            " onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.55)'"
+               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.18)'">
+                ← PREV
+            </button>
+
+            <!-- 페이지 표시 -->
+            <span id="ebookPageInfo" style="font-family:'Cormorant Garamond',serif; font-size:0.88rem; letter-spacing:0.16em; color:rgba(255,255,255,0.4); min-width:80px; text-align:center;">
+                — / —
+            </span>
+
+            <!-- 닫기 버튼 -->
+            <button onclick="closeEbookModal()" title="닫기 (ESC)" style="
+                font-family:'Cormorant Garamond',serif;
+                font-size:0.92rem; letter-spacing:0.1em;
+                color:rgba(255,255,255,0.55); background:transparent;
+                border:1px solid rgba(255,255,255,0.18);
+                padding:7px 20px; cursor:pointer;
+                transition:all .22s ease;
+                margin-left:auto;
+            " onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.55)'"
+               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.18)'">
+                CLOSE ✕
+            </button>
+
+            <!-- 다음 버튼 -->
+            <button onclick="ebookNext()" id="btnNext" title="다음 페이지 (→)" style="
+                font-family:'Cormorant Garamond',serif;
+                font-size:0.92rem; letter-spacing:0.1em;
+                color:rgba(255,255,255,0.55); background:transparent;
+                border:1px solid rgba(255,255,255,0.18);
+                padding:7px 20px; cursor:pointer;
+                transition:all .22s ease;
+            " onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.55)'"
+               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.18)'">
+                NEXT →
+            </button>
+        </div>
+
+        <!-- ebook iframe — 크기는 JS가 동적 계산 -->
+        <div id="ebookWrap" style="position:relative; overflow:hidden; background:#111;">
+            <iframe id="ebookFrame" src="" style="width:100%; height:100%; border:none; display:block;" allowfullscreen></iframe>
+        </div>
+
+        <!-- 하단 힌트 -->
+        <p style="margin-top:10px; font-family:'Cormorant Garamond',serif; font-size:0.78rem; letter-spacing:0.14em; color:rgba(255,255,255,0.22); text-transform:uppercase;">
+            ← → 키 또는 버튼으로 페이지 이동 &nbsp;|&nbsp; ESC 로 닫기
+        </p>
+    </div>
+
+    <script>
+    (function () {
+        /* ── 상수 ── */
+        var BOOK_W  = 1830;      // turn.js width
+        var BOOK_H  = 650.27;    // turn.js height
+        var RATIO   = BOOK_W / BOOK_H;  // ~2.814
+        var TOTAL_PAGES = 14;    // index_ebook.html pages 값과 동일하게
+
+        var modal   = document.getElementById('ebookModal');
+        var wrap    = document.getElementById('ebookWrap');
+        var frame   = document.getElementById('ebookFrame');
+        var info    = document.getElementById('ebookPageInfo');
+        var _currentPage = 1;
+
+        /* ── 크기 계산 ── */
+        function calcSize() {
+            var vw = window.innerWidth  * 0.95;
+            var vh = window.innerHeight * 0.78;  // 컨트롤 바·힌트 여유
+            var w, h;
+            if (vw / vh > RATIO) {
+                h = vh; w = h * RATIO;
+            } else {
+                w = vw; h = w / RATIO;
+            }
+            // 짝수로 맞추기 (turn.js 요구사항)
+            w = Math.floor(w / 2) * 2;
+            h = Math.round(h);
+            return { w: w, h: h };
+        }
+
+        function applySize() {
+            var s = calcSize();
+            wrap.style.width  = s.w + 'px';
+            wrap.style.height = s.h + 'px';
+            // iframe 내부 turn.js resize 트리거
+            try {
+                var doc = frame.contentWindow;
+                if (doc && doc.jQuery) {
+                    doc.jQuery(doc).trigger('resize');
+                }
+            } catch(e) {}
+        }
+
+        /* ── 페이지 넘기기 ── */
+        function ebookTurn(page) {
+            try {
+                var $ = frame.contentWindow.jQuery;
+                if (!$) return;
+                var book = $('.magazine', frame.contentDocument);
+                if (!book.length || !book.turn('is')) return;
+                book.turn('page', page);
+                _currentPage = book.turn('page');
+                updateInfo();
+            } catch(e) {}
+        }
+
+        function updateInfo() {
+            try {
+                var $ = frame.contentWindow.jQuery;
+                if (!$) return;
+                var book = $('.magazine', frame.contentDocument);
+                if (!book.length) return;
+                var p = book.turn('page');
+                var total = book.turn('pages');
+                info.textContent = p + ' / ' + total;
+                _currentPage = p;
+            } catch(e) {}
+        }
+
+        window.ebookPrev = function () { ebookTurn(_currentPage - 2 < 1 ? 1 : _currentPage - 2); };
+        window.ebookNext = function () { ebookTurn(_currentPage + 2 > TOTAL_PAGES ? TOTAL_PAGES : _currentPage + 2); };
+
+        /* ── 열기 / 닫기 ── */
+        window.openEbookModal = function () {
+            applySize();
+            frame.src = './index_ebook.html';
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            info.textContent = '1 / ' + TOTAL_PAGES;
+            _currentPage = 1;
+
+            // iframe 로드 후 페이지 정보 갱신
+            frame.onload = function () {
+                setTimeout(function () {
+                    updateInfo();
+                    applySize();
+                }, 600);
+                // turn.js turned 이벤트 후킹
+                try {
+                    var $ = frame.contentWindow.jQuery;
+                    if ($) {
+                        $('.magazine', frame.contentDocument).bind('turned', function () {
+                            updateInfo();
+                        });
+                    }
+                } catch(e) {}
+            };
+        };
+
+        window.closeEbookModal = function () {
+            modal.style.display = 'none';
+            frame.src = '';
+            document.body.style.overflow = '';
+            info.textContent = '— / —';
+            _currentPage = 1;
+        };
+
+        /* ── 리사이즈 ── */
+        window.addEventListener('resize', function () {
+            if (modal.style.display === 'flex') applySize();
+        });
+
+        /* ── 키보드 ── */
+        document.addEventListener('keydown', function (e) {
+            if (modal.style.display !== 'flex') return;
+            if (e.key === 'Escape')      closeEbookModal();
+            if (e.key === 'ArrowLeft')  { ebookPrev(); e.preventDefault(); }
+            if (e.key === 'ArrowRight') { ebookNext(); e.preventDefault(); }
+        });
+
+        /* ── 배경 클릭 닫기 ── */
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) closeEbookModal();
+        });
+    })();
+    </script>
 
     <!-- FOOTER -->
     <footer class="section" id="footer">
