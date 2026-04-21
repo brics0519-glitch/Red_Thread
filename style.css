@@ -315,7 +315,7 @@ nav li a.active::after {
 }
 
 .section-intro-lg {
-    max-width: 980px;
+    max-width: 1200px;
     margin-bottom: 3.4rem;
 }
 
@@ -442,7 +442,7 @@ nav li a.active::after {
 }
 
 .work-info p {
-    font-size: 1.8rem;
+    font-size: 1.45rem;
     line-height: 1.78;
     color: var(--text-soft);
     word-break: keep-all;
