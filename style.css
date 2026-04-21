@@ -70,6 +70,7 @@ a:hover {
 a:focus {
     color: var(--red);
     text-decoration: none;
+   outline: none;
 }
 
 p {
