@@ -895,14 +895,14 @@ nav li a.active::after {
 }
 
 .video-embed-info h3 {
-    font-size: 1.22rem;
+    font-size: 2rem;
     font-weight: 400;
     margin: 6px 0 4px;
     line-height: 1.2;
 }
 
 .video-embed-info p {
-    font-size: 0.95rem;
+    font-size: 1.45rem;
     color: var(--text-soft);
     line-height: 1.6;
 }
