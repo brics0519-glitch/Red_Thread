@@ -308,7 +308,7 @@ nav li a.active::after {
 }
 
 .section-intro p {
-    font-size: 2rem;
+    font-size: 1.45rem;
     line-height: 1.85;
     color: var(--text-strong);
     word-break: keep-all;
