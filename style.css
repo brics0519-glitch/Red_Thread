@@ -1045,6 +1045,9 @@ nav li a.active::after {
 
 .contact-info {
     padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
 }
 
 .contact-label {
@@ -1112,12 +1115,11 @@ nav li a.active::after {
 }
 .contact-thread-deco {
     width: 100%;
-    max-width: 420px;
-    height: 300px;
-    margin-top: 28px;
+    height: 340px;
+    margin-top: auto;
     overflow: hidden;
+    background: transparent;
     border: none;
-    background: #fff;
 }
 
 .contact-thread-iframe {
