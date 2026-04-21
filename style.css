@@ -233,37 +233,19 @@ nav li a.active::after {
    HERO
 ───────────────────────── */
 .hero-section {
+    position: relative;
+    width: 100%;
     height: 100vh;
-    min-height: 100vh;
-    background: var(--bg);
-    padding: 0;
+    overflow: hidden;
 }
 
-.main_video {
+.hero-iframe {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-}
-
-.main_video--mobile {
-    display: none;
-}
-
-.disply-table {
-    display: table;
-    width: 100%;
-    min-height: 100vh;
-    position: relative;
-    z-index: 2;
-}
-
-.table-cell {
-    display: table-cell;
-    vertical-align: middle;
-    min-height: 100vh;
-    height: 100vh;
+    border: none;
 }
 
 /* ─────────────────────────
