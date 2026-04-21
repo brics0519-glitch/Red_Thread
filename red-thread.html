@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RED MEMORY - Permanent Immersive Volume</title>
+    <title>시오타 치하루의 붉은 실 - Shiota's Red Threads</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         body {
@@ -11,7 +11,7 @@
             padding: 0;
             overflow: hidden;
             background-color: #ffffff;
-            font-family: 'Times New Roman', serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
         }
         #canvas-container {
             width: 100vw;
@@ -19,60 +19,78 @@
         }
         #ui-overlay {
             position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 20px;
+            left: 20px;
             color: #880000;
             pointer-events: none;
             z-index: 10;
-            text-align: center;
         }
         h1 {
             font-weight: 200;
-            letter-spacing: 0.4em;
+            letter-spacing: 0.2em;
             margin: 0;
-            font-size: 0.75rem;
-            opacity: 0.4;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+        .status {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            opacity: 0.6;
             text-transform: uppercase;
+        }
+        #instruction {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #aa0000;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            pointer-events: none;
+            opacity: 0.5;
         }
     </style>
 </head>
 <body>
 
     <div id="ui-overlay">
-        <h1>The Red Thread of Fate</h1>
+        <h1>RED MEMORY: HIGH PRECISION</h1>
+        <div id="current-state" class="status">Initializing...</div>
     </div>
 
+    <div id="instruction">마우스로 시점을 조절하여 실의 선명한 형상을 관찰하세요.</div>
     <div id="canvas-container"></div>
 
     <script>
         /**
-         * Chiharu Shiota Style - Permanent Volume & High Definition
-         * Dedicates a portion of particles to a persistent ambient web to keep the "inside" feeling.
+         * Chiharu Shiota Style Thread Animation - High Clarity Version
+         * Sequence: Scattering -> Clustering -> "Min Jae Kang" -> "PORTFOLIO" -> Maintaining -> Dissolving
          */
 
-        let scene, camera, renderer, particles, lines;
-        const totalParticleCount = 100000; 
-        const ambientCount = 30000; // 항상 공간을 채우는 배경 실의 수
-        const shapeCount = totalParticleCount - ambientCount; // 형태 형성에 사용될 입자 수
-        
+        let scene, camera, renderer, particles, lines, lineGeometry;
+        const particleCount = 15000; // 입자 수를 15,000개로 대폭 증설
         const targetPositions = [];
-        const originalOffsets = []; 
         
         let state = 0; 
         let stateTimer = 0;
-        const stateDurations = [1500, 3500, 4000, 500, 4000, 5500]; 
+        const stateDurations = [4000, 3000, 6000, 6000, 4000, 4000]; 
+        const stateNames = [
+            "산개 (Scattering)", 
+            "뭉침 (Clustering)", 
+            "이름 형성 (Min Jae Kang)", 
+            "주제 형성 (PORTFOLIO)", 
+            "유지 (Maintaining)", 
+            "해체 (Dissolving)"
+        ];
 
         let namePoints = [];
-        let eyePoints = [];
         let portfolioPoints = [];
 
         window.onload = function() {
             init();
-            namePoints = createTextPoints("Min Jae Kang", 115, 2200);
-            eyePoints = createDefinedEye(); 
-            portfolioPoints = createTextPoints("PORTFOLIO", 125, 2200);
-            setNewTargets();
+            // 가독성을 극대화하기 위해 캔버스 너비와 폰트 설정 조정
+            namePoints = createTextPoints("Min Jae Kang", 85, 1200);
+            portfolioPoints = createTextPoints("PORTFOLIO", 95, 1200);
             animate();
         };
 
@@ -81,8 +99,8 @@
             scene.background = new THREE.Color(0xffffff);
             scene.fog = new THREE.FogExp2(0xffffff, 0.005);
 
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 4500);
-            camera.position.z = 240; 
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 2000);
+            camera.position.z = 120; 
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -90,55 +108,39 @@
             document.getElementById('canvas-container').appendChild(renderer.domElement);
 
             const geometry = new THREE.BufferGeometry();
-            const posArray = new Float32Array(totalParticleCount * 3);
+            const posArray = new Float32Array(particleCount * 3);
             
-            for(let i = 0; i < totalParticleCount; i++) {
-                // 공간 전체를 메우는 초기 배치
-                const x = (Math.random() - 0.5) * 1600;
-                const y = (Math.random() - 0.5) * 1600;
-                const z = (Math.random() - 0.5) * 1200;
-                
+            for(let i = 0; i < particleCount; i++) {
+                const x = (Math.random() - 0.5) * 250;
+                const y = (Math.random() - 0.5) * 250;
+                const z = (Math.random() - 0.5) * 250;
                 posArray[i*3] = x;
                 posArray[i*3+1] = y;
                 posArray[i*3+2] = z;
-                
-                if (i < ambientCount) {
-                    // 배경 실: 타겟을 공간 내 무작위로 고정하여 숲의 질감 유지
-                    targetPositions.push({x, y, z, isAmbient: true});
-                } else {
-                    // 형상 실: 형태를 만들기 위해 이동 가능
-                    targetPositions.push({x, y, z, isAmbient: false});
-                }
-
-                originalOffsets.push({
-                    phase: Math.random() * Math.PI * 2,
-                    speed: 1.0 + Math.random() * 1.5,
-                    amplitude: i < ambientCount ? 0.1 : 0.005 // 배경 실은 더 크게 흔들림
-                });
+                targetPositions.push({x, y, z});
             }
 
             geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
             
             const material = new THREE.PointsMaterial({
-                color: 0xaa0000, 
-                size: 0.48, // 더욱 진하게 확대
+                color: 0xaa0000,
+                size: 0.18, // 선명도를 위해 입자 크기 미세 조정
                 transparent: true,
-                opacity: 0.9,
-                sizeAttenuation: true
+                opacity: 0.9 // 더 진하게 설정
             });
 
             particles = new THREE.Points(geometry, material);
             scene.add(particles);
 
-            const lineGeometry = new THREE.BufferGeometry();
-            const lineCount = 25000; // 실의 밀도 최대화
+            lineGeometry = new THREE.BufferGeometry();
+            const lineCount = 4000; // 실의 밀도를 높여 예술적 효과 강화
             const linePosArray = new Float32Array(lineCount * 2 * 3);
             lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePosArray, 3));
             
             const lineMaterial = new THREE.LineBasicMaterial({
-                color: 0x990000,
+                color: 0xaa0000,
                 transparent: true,
-                opacity: 0.5,
+                opacity: 0.06,
                 linewidth: 1
             });
 
@@ -146,149 +148,109 @@
             scene.add(lines);
 
             window.addEventListener('resize', onWindowResize, false);
-
+            
             document.addEventListener('mousemove', (e) => {
-                const mouseX = (e.clientX - window.innerWidth / 2) * 0.15;
-                const mouseY = (e.clientY - window.innerHeight / 2) * 0.15;
-                scene.rotation.y = mouseX * 0.0006;
-                scene.rotation.x = mouseY * 0.0006;
+                const mouseX = (e.clientX - window.innerWidth / 2) * 0.02;
+                const mouseY = (e.clientY - window.innerHeight / 2) * 0.02;
+                camera.position.x += (mouseX - camera.position.x) * 0.05;
+                camera.position.y += (-mouseY - camera.position.y) * 0.05;
             });
-        }
-
-        function createDefinedEye() {
-            const points = [];
-            const eyeWidth = 280; 
-            const eyeHeight = 60; 
-            const irisRadius = 24;
-            const pupilWidth = 3.2;
-            const pupilHeight = 40;
-            const eyeYOffset = 18; 
-
-            // 1. 눈꺼풀: 강력한 외곽선
-            for (let i = 0; i < 20000; i++) {
-                const t = (i / 20000) * 2 - 1;
-                const x = t * (eyeWidth / 2);
-                const upperY = Math.pow(1 - Math.abs(t), 0.35) * eyeHeight;
-                const lowerY = -Math.pow(1 - Math.abs(t), 0.5) * (eyeHeight * 0.5);
-                const y = Math.random() > 0.5 ? upperY : lowerY;
-                points.push({ x: x * 0.45, y: y * 0.45, z: 0 });
-            }
-
-            // 2. 흰자(공막): 요청대로 최소화된 밀도 (구분감 확보)
-            for (let i = 0; i < 4000; i++) {
-                const t = (Math.random() * 2 - 1);
-                const x = t * (eyeWidth / 2);
-                const upperLimit = Math.pow(1 - Math.abs(t), 0.35) * eyeHeight;
-                const lowerLimit = -Math.pow(1 - Math.abs(t), 0.5) * (eyeHeight * 0.5);
-                const y = lowerLimit + Math.random() * (upperLimit - lowerLimit);
-                const distToIris = Math.sqrt(x*x + (y - eyeYOffset)*(y - eyeYOffset));
-                if (distToIris > irisRadius + 8) { // 간격을 더 넓혀 확실히 비워둠
-                    points.push({ x: x * 0.45, y: y * 0.45, z: 0.5 });
-                }
-            }
-
-            // 3. 홍채 및 세로 동공: 시차 Ghosting 방지를 위한 Z축 밀착
-            for (let i = 0; i < 35000; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const r = Math.sqrt(Math.random()) * irisRadius;
-                const x = Math.cos(angle) * r;
-                const y = Math.sin(angle) * r + eyeYOffset;
-                const isPupil = (Math.abs(x) < pupilWidth) && 
-                                (Math.abs(y - eyeYOffset) < (pupilHeight / 2) * Math.sqrt(Math.max(0, 1 - Math.pow(x/pupilWidth, 2))));
-                points.push({
-                    x: x * 0.45,
-                    y: y * 0.45,
-                    z: isPupil ? 4 : 1 // Z축 차이를 최소화하여 2개로 보이는 현상 해결
-                });
-            }
-            return points;
         }
 
         function createTextPoints(text, fontSize, canvasWidth) {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = canvasWidth;
-            canvas.height = 500; 
+            canvas.height = 300; 
+            
             ctx.fillStyle = 'black';
-            ctx.font = `900 ${fontSize}px "Times New Roman", serif`;
+            ctx.font = `900 ${fontSize}px "serif", "Times New Roman"`; // 900 가중치로 더 두껍게
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(text, canvasWidth/2, 250);
+            ctx.fillText(text, canvasWidth/2, 150);
             
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             const points = [];
-            let minX = canvasWidth, maxX = 0;
-
-            for(let y = 0; y < canvas.height; y += 1) {
-                for(let x = 0; x < canvas.width; x += 1) {
+            
+            // step을 1로 설정하여 모든 유효한 픽셀을 추출 (최고 정밀도)
+            const step = 1;
+            for(let y = 0; y < canvas.height; y += step) {
+                for(let x = 0; x < canvas.width; x += step) {
                     const alpha = imageData[(y * canvas.width + x) * 4 + 3];
-                    if(alpha > 150) { 
-                        if (x < minX) minX = x;
-                        if (x > maxX) maxX = x;
-                        points.push({ x, y });
+                    if(alpha > 160) { // 임계값을 높여 외곽선을 더 날카롭게 추출
+                        points.push({
+                            x: (x - canvasWidth/2) * 0.15, // 약간 더 작게 만들어 화면 내 안착
+                            y: (150 - y) * 0.15,
+                            z: (Math.random() - 0.5) * 0.1 // Z-깊이를 거의 0에 가깝게 하여 선명도 극대화
+                        });
                     }
                 }
             }
-
-            const centerX = (minX + maxX) / 2;
-            return points.map(p => ({
-                x: (p.x - centerX) * 0.32, 
-                y: (250 - p.y) * 0.32,
-                z: 0
-            }));
+            return points;
         }
 
         function updateState() {
             const now = Date.now();
             if(!this.lastUpdate) this.lastUpdate = now;
+            
             stateTimer += (now - this.lastUpdate);
             this.lastUpdate = now;
 
             if(stateTimer > stateDurations[state]) {
                 stateTimer = 0;
                 state = (state + 1) % 6;
+                document.getElementById('current-state').innerText = stateNames[state];
                 setNewTargets();
             }
         }
 
         function setNewTargets() {
-            for(let i = 0; i < totalParticleCount; i++) {
-                if (targetPositions[i].isAmbient) continue; // 배경 실은 위치 유지
-
-                const shapeIdx = i - ambientCount;
+            for(let i = 0; i < particleCount; i++) {
                 switch(state) {
-                    case 0: // Scattering
-                        targetPositions[i].x = (Math.random() - 0.5) * 1400;
-                        targetPositions[i].y = (Math.random() - 0.5) * 1400;
-                        targetPositions[i].z = (Math.random() - 0.5) * 1100;
+                    case 0: // Scatter
+                        targetPositions[i] = {
+                            x: (Math.random() - 0.5) * 250,
+                            y: (Math.random() - 0.5) * 250,
+                            z: (Math.random() - 0.5) * 250
+                        };
                         break;
-                    case 1: // Min Jae Kang (진함 극대화)
-                        const nIdx = shapeIdx % namePoints.length;
-                        targetPositions[i].x = namePoints[nIdx].x + (Math.random() - 0.5) * 0.3; 
-                        targetPositions[i].y = namePoints[nIdx].y + (Math.random() - 0.5) * 0.3; 
-                        targetPositions[i].z = namePoints[nIdx].z;
-                        break;
-                    case 2: // Menacing Eye
-                        const eIdx = shapeIdx % eyePoints.length;
-                        targetPositions[i].x = eyePoints[eIdx].x;
-                        targetPositions[i].y = eyePoints[eIdx].y;
-                        targetPositions[i].z = eyePoints[eIdx].z;
-                        break;
-                    case 3: // Blink
-                        targetPositions[i].y *= 0.0001; 
-                        break;
-                    case 4: // PORTFOLIO
-                        const pIdx = shapeIdx % portfolioPoints.length;
-                        targetPositions[i].x = portfolioPoints[pIdx].x;
-                        targetPositions[i].y = portfolioPoints[pIdx].y;
-                        targetPositions[i].z = portfolioPoints[pIdx].z;
-                        break;
-                    case 5: // Final Fly-through
+                    case 1: // Cluster
                         const angle = Math.random() * Math.PI * 2;
-                        const dist = 1800 + Math.random() * 1800;
-                        targetPositions[i].x = Math.cos(angle) * dist;
-                        targetPositions[i].y = Math.sin(angle) * dist;
-                        targetPositions[i].z = 2800 + Math.random() * 2800;
+                        const radius = Math.random() * 35;
+                        targetPositions[i] = {
+                            x: Math.cos(angle) * radius,
+                            y: Math.sin(angle) * radius,
+                            z: (Math.random() - 0.5) * 30
+                        };
+                        break;
+                    case 2: // "Min Jae Kang"
+                        const nIdx = i % namePoints.length;
+                        if (i < namePoints.length * 1.8) { // 밀도를 위해 입자를 중첩해서 채움
+                             targetPositions[i] = { x: namePoints[nIdx].x, y: namePoints[nIdx].y, z: namePoints[nIdx].z };
+                        } else {
+                            const a = Math.random() * Math.PI * 2;
+                            const r = 80 + Math.random() * 60;
+                            targetPositions[i] = { x: Math.cos(a) * r, y: Math.sin(a) * r, z: -60 - Math.random() * 60 };
+                        }
+                        break;
+                    case 3: // "PORTFOLIO"
+                        const pIdx = i % portfolioPoints.length;
+                        if (i < portfolioPoints.length * 1.8) {
+                            targetPositions[i] = { x: portfolioPoints[pIdx].x, y: portfolioPoints[pIdx].y, z: portfolioPoints[pIdx].z };
+                        } else {
+                            const a = Math.random() * Math.PI * 2;
+                            const r = 90 + Math.random() * 70;
+                            targetPositions[i] = { x: Math.cos(a) * r, y: Math.sin(a) * r, z: -60 - Math.random() * 60 };
+                        }
+                        break;
+                    case 4: // Maintain
+                        break;
+                    case 5: // Dissolve
+                        targetPositions[i] = {
+                            x: (Math.random() - 0.5) * 350,
+                            y: (Math.random() - 0.5) * 350,
+                            z: (Math.random() - 0.5) * 350
+                        };
                         break;
                 }
             }
@@ -300,52 +262,44 @@
 
             const posAttr = particles.geometry.attributes.position;
             const linePosAttr = lines.geometry.attributes.position;
-            const time = Date.now() * 0.001;
-
-            const isForming = (state === 1 || state === 2 || state === 4);
-            let currentOpacity = 1.0; 
-            if (state === 0) currentOpacity = 1.0 * Math.min(stateTimer / 800, 1);
-            if (state === 5) currentOpacity = 1.0 * (1 - Math.min(stateTimer / 5000, 1));
-
-            particles.material.opacity = currentOpacity;
-            lines.material.opacity = isForming ? currentOpacity * 0.25 : currentOpacity * 0.55;
-
-            // 카메라 움직임
-            if (state === 4) camera.position.z -= 1.6; 
-            else if (state === 5) camera.position.z -= 16.0; 
-            else camera.position.z = 240;
-
-            for(let i = 0; i < totalParticleCount; i++) {
+            
+            for(let i = 0; i < particleCount; i++) {
                 let target = targetPositions[i];
-                const off = originalOffsets[i];
-                // 숨쉬는 효과: 배경 실은 항상, 형성 실은 비형성시에만
-                const breathe = (target.isAmbient || !isForming) ? Math.sin(time * off.speed + off.phase) * off.amplitude : 0;
-
-                const lerpSpeed = (state === 3) ? 0.85 : (isForming ? 0.45 : 0.1);
                 
-                posAttr.array[i*3] += (target.x + breathe - posAttr.array[i*3]) * lerpSpeed;
-                posAttr.array[i*3+1] += (target.y + breathe - posAttr.array[i*3+1]) * lerpSpeed;
-                posAttr.array[i*3+2] += (target.z + breathe - posAttr.array[i*3+2]) * lerpSpeed;
+                // 유지 상태일 때 미세한 흔들림 최소화 (선명도 유지)
+                if(state === 4) {
+                    target.x += Math.sin(Date.now() * 0.001 + i) * 0.003;
+                    target.y += Math.cos(Date.now() * 0.001 + i) * 0.003;
+                }
+
+                // 텍스트 상태일 때 더 민감하고 빠르게 이동
+                const lerpSpeed = (state === 2 || state === 3) ? 0.09 : 0.04;
+                posAttr.array[i*3] += (target.x - posAttr.array[i*3]) * lerpSpeed;
+                posAttr.array[i*3+1] += (target.y - posAttr.array[i*3+1]) * lerpSpeed;
+                posAttr.array[i*3+2] += (target.z - posAttr.array[i*3+2]) * lerpSpeed;
             }
+            
             posAttr.needsUpdate = true;
 
             const lineCount = lines.geometry.attributes.position.count / 2;
             for(let i = 0; i < lineCount; i++) {
-                const p1 = i * 2;
-                // 연결 로직: 형태가 형성될 때는 텍스트 내부 입자끼리, 평상시엔 무작위로 길게 연결하여 부피감 확보
-                const p2 = (i * 2 + (isForming ? 1 : Math.floor(Math.random() * 12))) % totalParticleCount; 
-                linePosAttr.array[i * 6] = posAttr.array[p1 * 3];
-                linePosAttr.array[i * 6 + 1] = posAttr.array[p1 * 3 + 1];
-                linePosAttr.array[i * 6 + 2] = posAttr.array[p1 * 3 + 2];
-                linePosAttr.array[i * 6 + 3] = posAttr.array[p2 * 3];
-                linePosAttr.array[i * 6 + 4] = posAttr.array[p2 * 3 + 1];
-                linePosAttr.array[i * 6 + 5] = posAttr.array[p2 * 3 + 2];
+                const p1Index = i * 2;
+                const p2Index = (i * 2 + 10) % particleCount; 
+                
+                linePosAttr.array[i * 6] = posAttr.array[p1Index * 3];
+                linePosAttr.array[i * 6 + 1] = posAttr.array[p1Index * 3 + 1];
+                linePosAttr.array[i * 6 + 2] = posAttr.array[p1Index * 3 + 2];
+                
+                linePosAttr.array[i * 6 + 3] = posAttr.array[p2Index * 3];
+                linePosAttr.array[i * 6 + 4] = posAttr.array[p2Index * 3 + 1];
+                linePosAttr.array[i * 6 + 5] = posAttr.array[p2Index * 3 + 2];
             }
             linePosAttr.needsUpdate = true;
 
-            const rSpeed = isForming ? 0 : 0.01;
-            particles.rotation.y += rSpeed;
-            lines.rotation.y += rSpeed;
+            // 텍스트 감상 시 회전을 거의 멈춤으로써 가독성 극대화
+            const rotationSpeed = (state === 2 || state === 3) ? 0.00005 : 0.0008;
+            particles.rotation.y += rotationSpeed;
+            lines.rotation.y += rotationSpeed;
 
             camera.lookAt(scene.position);
             renderer.render(scene, camera);
