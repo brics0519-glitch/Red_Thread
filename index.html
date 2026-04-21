@@ -28,8 +28,11 @@
     </div>
 
     <header class="navbar-fixed-top">
+        <button class="nav-toggle" id="navToggle" aria-label="메뉴 열기">
+            <span></span><span></span><span></span>
+        </button>
         <nav>
-            <ul>
+            <ul id="navMenu">
                 <li><a href="#video">VIDEO</a></li>
                 <li><a href="#brand">WEBSITE</a></li>
                 <li><a href="#product">PRODUCT</a></li>
@@ -122,6 +125,9 @@
                         <span class="work-category">Motion1</span>
                         <h3>Good Morning</h3>
                         <p>Jitter</p>
+                        <div class="wide-buttons" style="margin-top:14px;">
+                            <button class="wide-btn" onclick="openSketchModal()">스케치북 보기</button>
+                        </div>
                     </div>
                 </div>
 
@@ -330,8 +336,10 @@
     </div>
 </section>
 <!-- CONTACT -->
-<section class="section works-section contact-section" id="contact">
-    <div class="container">
+<section class="section works-section contact-section" id="contact" style="position:relative; overflow:hidden;">
+    <!-- Red Thread Background Canvas -->
+    <canvas id="threadCanvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; opacity:0.13; z-index:0;"></canvas>
+    <div class="container" style="position:relative; z-index:1;">
         <div class="section-head" data-aos="fade-up">
             <span class="sec-label">— 07 &nbsp; CONTACT</span>
             <h2 class="section-title">Contact</h2>
@@ -577,9 +585,169 @@
     })();
     </script>
 
+    <!-- SKETCH MODAL -->
+    <div id="sketchModal" style="display:none; position:fixed; inset:0; background:rgba(10,10,10,0.88); z-index:99999; align-items:center; justify-content:center; flex-direction:column;">
+        <div id="sketchBar" style="
+            display:flex; align-items:center; justify-content:space-between;
+            width:100%; max-width:1400px;
+            padding: 0 12px 10px;
+            gap: 16px;
+        ">
+            <button onclick="sketchPrev()" id="btnSketchPrev" title="이전 페이지 (←)" style="
+                font-family:'Cormorant Garamond',serif;
+                font-size:0.92rem; letter-spacing:0.1em;
+                color:rgba(255,255,255,0.55); background:transparent;
+                border:1px solid rgba(255,255,255,0.18);
+                padding:7px 20px; cursor:pointer;
+                transition:all .22s ease;
+            " onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.55)'"
+               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.18)'">
+                ← PREV
+            </button>
+            <span id="sketchPageInfo" style="font-family:'Cormorant Garamond',serif; font-size:0.88rem; letter-spacing:0.16em; color:rgba(255,255,255,0.4); min-width:80px; text-align:center;">
+                — / —
+            </span>
+            <button onclick="closeSketchModal()" title="닫기 (ESC)" style="
+                font-family:'Cormorant Garamond',serif;
+                font-size:0.92rem; letter-spacing:0.1em;
+                color:rgba(255,255,255,0.55); background:transparent;
+                border:1px solid rgba(255,255,255,0.18);
+                padding:7px 20px; cursor:pointer;
+                transition:all .22s ease;
+                margin-left:auto;
+            " onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.55)'"
+               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.18)'">
+                CLOSE ✕
+            </button>
+            <button onclick="sketchNext()" id="btnSketchNext" title="다음 페이지 (→)" style="
+                font-family:'Cormorant Garamond',serif;
+                font-size:0.92rem; letter-spacing:0.1em;
+                color:rgba(255,255,255,0.55); background:transparent;
+                border:1px solid rgba(255,255,255,0.18);
+                padding:7px 20px; cursor:pointer;
+                transition:all .22s ease;
+            " onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.55)'"
+               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.18)'">
+                NEXT →
+            </button>
+        </div>
+        <div id="sketchWrap" style="position:relative; overflow:hidden; background:#111;">
+            <iframe id="sketchFrame" src="" style="width:100%; height:100%; border:none; display:block;" allowfullscreen></iframe>
+        </div>
+        <p style="margin-top:10px; font-family:'Cormorant Garamond',serif; font-size:0.78rem; letter-spacing:0.14em; color:rgba(255,255,255,0.22); text-transform:uppercase;">
+            ← → 키 또는 버튼으로 페이지 이동 &nbsp;|&nbsp; ESC 로 닫기
+        </p>
+    </div>
+
+    <script>
+    (function () {
+        var BOOK_W  = 1830;
+        var BOOK_H  = 650.27;
+        var RATIO   = BOOK_W / BOOK_H;
+        var TOTAL_PAGES = 4;
+
+        var modal   = document.getElementById('sketchModal');
+        var wrap    = document.getElementById('sketchWrap');
+        var frame   = document.getElementById('sketchFrame');
+        var info    = document.getElementById('sketchPageInfo');
+        var _currentPage = 1;
+
+        function calcSize() {
+            var vw = window.innerWidth  * 0.95;
+            var vh = window.innerHeight * 0.78;
+            var w, h;
+            if (vw / vh > RATIO) { h = vh; w = h * RATIO; }
+            else { w = vw; h = w / RATIO; }
+            w = Math.floor(w / 2) * 2;
+            h = Math.round(h);
+            return { w: w, h: h };
+        }
+
+        function applySize() {
+            var s = calcSize();
+            wrap.style.width  = s.w + 'px';
+            wrap.style.height = s.h + 'px';
+            try {
+                var doc = frame.contentWindow;
+                if (doc && doc.jQuery) doc.jQuery(doc).trigger('resize');
+            } catch(e) {}
+        }
+
+        function sketchTurn(page) {
+            try {
+                var $ = frame.contentWindow.jQuery;
+                if (!$) return;
+                var book = $('.magazine', frame.contentDocument);
+                if (!book.length || !book.turn('is')) return;
+                book.turn('page', page);
+                _currentPage = book.turn('page');
+                updateInfo();
+            } catch(e) {}
+        }
+
+        function updateInfo() {
+            try {
+                var $ = frame.contentWindow.jQuery;
+                if (!$) return;
+                var book = $('.magazine', frame.contentDocument);
+                if (!book.length) return;
+                var p = book.turn('page');
+                var total = book.turn('pages');
+                info.textContent = p + ' / ' + total;
+                _currentPage = p;
+            } catch(e) {}
+        }
+
+        window.sketchPrev = function () { sketchTurn(_currentPage - 2 < 1 ? 1 : _currentPage - 2); };
+        window.sketchNext = function () { sketchTurn(_currentPage + 2 > TOTAL_PAGES ? TOTAL_PAGES : _currentPage + 2); };
+
+        window.openSketchModal = function () {
+            applySize();
+            frame.src = './index_sketch.html';
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            info.textContent = '1 / ' + TOTAL_PAGES;
+            _currentPage = 1;
+            frame.onload = function () {
+                setTimeout(function () { updateInfo(); applySize(); }, 600);
+                try {
+                    var $ = frame.contentWindow.jQuery;
+                    if ($) {
+                        $('.magazine', frame.contentDocument).bind('turned', function () { updateInfo(); });
+                    }
+                } catch(e) {}
+            };
+        };
+
+        window.closeSketchModal = function () {
+            modal.style.display = 'none';
+            frame.src = '';
+            document.body.style.overflow = '';
+            info.textContent = '— / —';
+            _currentPage = 1;
+        };
+
+        window.addEventListener('resize', function () {
+            if (modal.style.display === 'flex') applySize();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (modal.style.display !== 'flex') return;
+            if (e.key === 'Escape')      closeSketchModal();
+            if (e.key === 'ArrowLeft')  { sketchPrev(); e.preventDefault(); }
+            if (e.key === 'ArrowRight') { sketchNext(); e.preventDefault(); }
+        });
+
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) closeSketchModal();
+        });
+    })();
+    </script>
+
     <!-- FOOTER -->
-    <footer class="section" id="footer">
-        <div class="container">
+    <footer class="section" id="footer" style="position:relative; overflow:hidden;">
+        <canvas id="footerThreadCanvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; opacity:0.18; z-index:0;"></canvas>
+        <div class="container" style="position:relative; z-index:1;">
             <p>© Kang Min Jae's Portfolio. All Rights Reserved.</p>
         </div>
     </footer>
@@ -625,6 +793,92 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 </script>
-</body>
+<script>
+/* ── Red Thread Canvas (Contact + Footer) ── */
+(function () {
+    function initThreadCanvas(canvasId, particleCount) {
+        var canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var W, H, particles = [], lines = [];
+
+        function resize() {
+            var rect = canvas.parentElement.getBoundingClientRect();
+            W = canvas.width  = rect.width;
+            H = canvas.height = rect.height;
+        }
+
+        function Particle() {
+            this.x = Math.random() * W;
+            this.y = Math.random() * H;
+            this.vx = (Math.random() - 0.5) * 0.28;
+            this.vy = (Math.random() - 0.5) * 0.28;
+        }
+        Particle.prototype.update = function () {
+            this.x += this.vx;
+            this.y += this.vy;
+            if (this.x < 0 || this.x > W) this.vx *= -1;
+            if (this.y < 0 || this.y > H) this.vy *= -1;
+        };
+
+        resize();
+        for (var i = 0; i < particleCount; i++) particles.push(new Particle());
+
+        var maxDist = 160;
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+            for (var i = 0; i < particles.length; i++) {
+                particles[i].update();
+            }
+            for (var i = 0; i < particles.length; i++) {
+                for (var j = i + 1; j < particles.length; j++) {
+                    var dx = particles[i].x - particles[j].x;
+                    var dy = particles[i].y - particles[j].y;
+                    var dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < maxDist) {
+                        var alpha = 1 - dist / maxDist;
+                        ctx.strokeStyle = 'rgba(170,46,46,' + (alpha * 0.7) + ')';
+                        ctx.lineWidth = alpha * 1.1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', resize);
+        draw();
+    }
+
+    // contact section은 높이가 확보된 뒤 초기화
+    window.addEventListener('load', function () {
+        initThreadCanvas('threadCanvas', 55);
+        initThreadCanvas('footerThreadCanvas', 30);
+    });
+})();
+/* ── Mobile Nav Toggle ── */
+(function () {
+    var toggle = document.getElementById('navToggle');
+    var menu   = document.getElementById('navMenu');
+    if (!toggle || !menu) return;
+
+    toggle.addEventListener('click', function () {
+        var isOpen = menu.classList.toggle('open');
+        toggle.classList.toggle('open', isOpen);
+        toggle.setAttribute('aria-label', isOpen ? '메뉴 닫기' : '메뉴 열기');
+    });
+
+    // nav 링크 클릭 시 메뉴 닫기
+    menu.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+            menu.classList.remove('open');
+            toggle.classList.remove('open');
+        });
+    });
+})();
+</script>
 
 </html>
