@@ -552,7 +552,14 @@ nav li a.active::after {
 .wide-project-content {
     max-width: 500px;
 }
+.wide-project-image {
+    cursor: pointer;
+    transition: transform .3s ease;
+}
 
+.wide-project-image:hover img {
+    transform: scale(1.02);
+}
 #brand .wide-project-content {
     max-width: 520px;
 }
