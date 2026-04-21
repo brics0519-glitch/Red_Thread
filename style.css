@@ -1067,6 +1067,7 @@ nav li a.active::after {
     color: var(--text);
     border-bottom: 1px solid rgba(31, 31, 31, 0.14);
     padding-bottom: 8px;
+    margin-bottom: 32px;
     transition: color .25s ease, border-color .25s ease;
 }
 
