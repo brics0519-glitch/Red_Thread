@@ -584,8 +584,8 @@ nav li a.active::after {
 }
 
 .wide-desc {
-    font-size: 1.04rem;
-    line-height: 1.9;
+    font-size: 1.08rem;
+    line-height: 1.8;
     color: var(--text-strong);
     margin-bottom: 12px;
     word-break: keep-all;
