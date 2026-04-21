@@ -30,7 +30,7 @@
 *::before,
 *::after {
     margin: 0;
-    padding: 0;
+    adding: 0;
     box-sizing: border-box;
 }
 
@@ -41,25 +41,25 @@ html {
 body {
     font-family: 'Noto Sans KR', sans-serif;
     font-weight: 300;
-    font-size: 24px;
+    font-size: 24x;
     line-height: 1.8;
     color: var(--text);
     background: var(--bg);
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    text-rendering: otimizeLegibility;
 }
 
 img,
 video {
-    display: block;
+    dislay: block;
     max-width: 100%;
 }
 
 a {
     color: inherit;
     text-decoration: none;
-    transition: color .25s ease, transform .25s ease, opacity .25s ease;
+    transition: color .25s ease, transform .25s ease, oacity .25s ease;
 }
 
 a:hover {
@@ -75,7 +75,7 @@ a:focus {
 p {
     font-family: 'Noto Sans KR', sans-serif;
     font-weight: 300;
-    font-size: 1.45rem;
+    font-size: 2rem;
     line-height: 1.9;
     color: var(--text-strong);
 }
@@ -308,7 +308,7 @@ nav li a.active::after {
 }
 
 .section-intro p {
-    font-size: 1.08rem;
+    font-size: 2rem;
     line-height: 1.85;
     color: var(--text-strong);
     word-break: keep-all;
@@ -320,14 +320,14 @@ nav li a.active::after {
 }
 
 .section-intro-lg p {
-    font-size: 1.14rem;
+    font-size: 1.45rem;
     line-height: 1.9;
     color: var(--text-strong);
     word-break: keep-all;
 }
 
 #video .section-intro-lg p {
-    font-size: 1.14rem;
+    font-size: 1.45rem;
 }
 
 /* ─────────────────────────
@@ -435,14 +435,14 @@ nav li a.active::after {
 }
 
 .work-info h3 {
-    font-size: 1.45rem;
+    font-size: 2rem;
     font-weight: 400;
     margin-bottom: 0.4rem;
     line-height: 1.16;
 }
 
 .work-info p {
-    font-size: 0.98rem;
+    font-size: 1.45rem;
     line-height: 1.78;
     color: var(--text-soft);
     word-break: keep-all;
