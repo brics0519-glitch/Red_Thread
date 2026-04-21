@@ -625,7 +625,7 @@ nav li a.active::after {
 
 .contact-closing {
     margin-top: 24px;
-    max-width: 420px;
+    max-width: 620px;
     font-family: 'Cormorant Garamond', 'Noto Serif KR', serif;
     font-size: clamp(1.2rem, 1.6vw, 1.6rem);
     line-height: 1.5;
