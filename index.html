@@ -605,6 +605,26 @@
             document.body.appendChild(s);
         })();
     </script>
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        const targetId = this.getAttribute('href');
+
+        // "#"만 있는 경우는 무시 (이미 위에서 막았으니까 안전)
+        if (targetId === '#') return;
+
+        const target = document.querySelector(targetId);
+
+        if (target) {
+            e.preventDefault();
+
+            target.scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+</script>
 </body>
 
 </html>
