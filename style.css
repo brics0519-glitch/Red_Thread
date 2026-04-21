@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════
    FINAL PORTFOLIO CSS
-   white base + footer red thread + description-focused
+   white base + footer red thread + balanced type
 ═══════════════════════════════════════════════ */
 
 /* ─────────────────────────
@@ -41,7 +41,7 @@ html {
 body {
     font-family: 'Noto Sans KR', sans-serif;
     font-weight: 300;
-    font-size: 18px; /* 17 → 18 */
+    font-size: 18px;
     line-height: 1.8;
     color: var(--text);
     background: var(--bg);
@@ -75,7 +75,7 @@ a:focus {
 p {
     font-family: 'Noto Sans KR', sans-serif;
     font-weight: 300;
-    font-size: 1.12rem; /* 1.04 → 1.12 */
+    font-size: 1.12rem;
     line-height: 1.9;
     color: var(--text-strong);
 }
@@ -179,7 +179,7 @@ nav li a {
     display: inline-block;
     padding: 0.45rem 2.05rem;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.1rem; /* 1.05 → 1.1 */
+    font-size: 1.1rem;
     font-weight: 400;
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -218,7 +218,6 @@ nav li a.active::after {
     overflow: hidden;
 }
 
-/* 기존 장식선 제거 */
 .section:not(#footer)::before,
 .section:not(#footer)::after,
 .section .container::after,
@@ -282,7 +281,7 @@ nav li a.active::after {
     display: inline-block;
     margin-bottom: 0.8rem;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.05rem; /* 0.9 → 1.05 */
+    font-size: 1.05rem;
     font-weight: 400;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -309,7 +308,7 @@ nav li a.active::after {
 }
 
 .section-intro p {
-      font-size: 1.08rem;
+    font-size: 1.08rem;
     line-height: 1.85;
     color: var(--text-strong);
     word-break: keep-all;
@@ -321,14 +320,14 @@ nav li a.active::after {
 }
 
 .section-intro-lg p {
-   font-size: 1.14rem;
+    font-size: 1.14rem;
     line-height: 1.9;
     color: var(--text-strong);
     word-break: keep-all;
 }
 
 #video .section-intro-lg p {
-    font-size: 1.4rem; /* 1.26 → 1.4 */
+    font-size: 1.14rem;
 }
 
 /* ─────────────────────────
@@ -352,7 +351,6 @@ nav li a.active::after {
     grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-/* 동영상은 정확히 4그리드 */
 #video .works-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -392,7 +390,6 @@ nav li a.active::after {
     aspect-ratio: 3 / 2;
 }
 
-/* 홈페이지, SNS 제외하고 나머지 섹션 3:2 */
 #video .work-thumb,
 #product .work-thumb,
 #detail .work-thumb,
@@ -400,14 +397,13 @@ nav li a.active::after {
     aspect-ratio: 3 / 2;
 }
 
-/* SNS는 세로 유지 */
 #sns .work-thumb,
 #sns .vertical-thumb {
     aspect-ratio: 4 / 5.25;
 }
 
 .work-thumb img {
-  width: 100%;
+    width: 100%;
     height: 100%;
     object-fit: cover;
     transform: scale(1);
@@ -418,17 +414,17 @@ nav li a.active::after {
 }
 
 .work-card:hover .work-thumb img {
-   transform: scale(1.018);
+    transform: scale(1.018);
 }
 
 .work-info {
-   padding: 18px 18px 20px;
+    padding: 18px 18px 20px;
     border-top: 1px solid rgba(31, 31, 31, 0.06);
     background: rgba(255, 255, 255, 0.92);
 }
 
 .work-category {
-     display: inline-block;
+    display: inline-block;
     margin-bottom: 0.42rem;
     font-family: 'Cormorant Garamond', serif;
     font-size: 1rem;
@@ -439,7 +435,7 @@ nav li a.active::after {
 }
 
 .work-info h3 {
-   font-size: 1.45rem;
+    font-size: 1.45rem;
     font-weight: 400;
     margin-bottom: 0.4rem;
     line-height: 1.16;
@@ -487,7 +483,6 @@ nav li a.active::after {
     gap: 100px;
 }
 
-/* 홈페이지 섹션은 기존보다 설명 중심이지만 너무 좁지 않게 */
 #brand .wide-project {
     display: grid;
     grid-template-columns: 1.15fr 0.85fr;
@@ -495,7 +490,6 @@ nav li a.active::after {
     align-items: center;
 }
 
-/* 상세/카드뉴스는 이미지 가로형 + 설명 축소 */
 #detail .wide-project,
 #cardnews .wide-project {
     display: grid;
@@ -528,6 +522,7 @@ nav li a.active::after {
 
 .wide-project-image {
     width: 100%;
+    overflow: hidden;
 }
 
 .wide-project-image img {
@@ -537,9 +532,13 @@ nav li a.active::after {
     border: 1px solid rgba(31, 31, 31, 0.08);
     background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 16px 26px rgba(0, 0, 0, 0.03);
+    transform: scale(1);
+    transform-origin: center center;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
-/* A4 원본도 가로형 레이아웃에서 너무 세로로 길지 않게 */
 .a4-image {
     max-width: 520px;
     margin: 0 auto;
@@ -551,9 +550,11 @@ nav li a.active::after {
 }
 
 #detail .wide-project-image,
-#cardnews .wide-project-image {
+#cardnews .wide-project-image,
+#brand .wide-project-image {
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 .wide-project-content {
@@ -568,7 +569,7 @@ nav li a.active::after {
     display: inline-block;
     margin-bottom: 12px;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.1rem; /* 0.94 → 1.1 */
+    font-size: 1.1rem;
     font-weight: 400;
     letter-spacing: 0.20em;
     text-transform: uppercase;
@@ -576,14 +577,14 @@ nav li a.active::after {
 }
 
 .wide-title {
-    font-size: clamp(2rem, 3.2vw, 2.8rem); /* 기존 대비 약간 키움 */
+    font-size: clamp(2rem, 3.2vw, 2.8rem);
     font-weight: 400;
     margin-bottom: 1rem;
     line-height: 1.1;
 }
 
 .wide-desc {
-   font-size: 1.04rem;
+    font-size: 1.04rem;
     line-height: 1.9;
     color: var(--text-strong);
     margin-bottom: 12px;
@@ -599,7 +600,7 @@ nav li a.active::after {
 }
 
 .wide-meta span {
-   display: inline-flex;
+    display: inline-flex;
     align-items: center;
     min-height: 40px;
     padding: 9px 16px;
@@ -642,7 +643,7 @@ nav li a.active::after {
     margin-top: 34px;
     max-width: 420px;
     font-family: 'Cormorant Garamond', 'Noto Serif KR', serif;
-    font-size: clamp(1.6rem, 2.8vw, 2.4rem); /* clamp(1.5rem, 2.6vw, 2.2rem) → 키움 */
+    font-size: clamp(1.6rem, 2.8vw, 2.4rem);
     line-height: 1.35;
     letter-spacing: -0.02em;
     color: var(--text);
@@ -666,7 +667,7 @@ nav li a.active::after {
     display: flex !important;
 }
 
-.popup>div {
+.popup > div {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -675,7 +676,7 @@ nav li a.active::after {
     max-width: 960px;
 }
 
-.popup>div>img {
+.popup > div > img {
     width: 100%;
     border: 1px solid rgba(31, 31, 31, 0.10);
     box-shadow: 0 18px 30px var(--shadow);
@@ -757,7 +758,6 @@ nav li a.active::after {
     overflow: hidden;
 }
 
-/* 붉은 실 배경 */
 #footer::before {
     content: "";
     position: absolute;
@@ -772,7 +772,6 @@ nav li a.active::after {
     display: none;
 }
 
-/* 내용 위로 */
 #footer .container {
     position: relative;
     z-index: 1;
@@ -780,7 +779,7 @@ nav li a.active::after {
 
 #footer p {
     text-align: center;
-    font-size: 13px; /* 12 → 13 */
+    font-size: 13px;
     color: var(--text-faint);
 }
 
@@ -811,10 +810,358 @@ nav li a.active::after {
 }
 
 /* ─────────────────────────
-   RESPONSIVE
+   VIDEO EMBED GRID
+───────────────────────── */
+.video-embed-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+}
+
+.video-embed-card {
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid var(--border);
+    transition: transform .32s ease, box-shadow .32s ease;
+}
+
+.video-embed-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 28px var(--shadow-soft);
+}
+
+.video-embed-wrap {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    overflow: hidden;
+    background: var(--bg-soft);
+}
+
+.video-embed-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+.video-embed-wrap--native {
+    padding-bottom: 0;
+    aspect-ratio: 16 / 9;
+    background: #000;
+}
+
+.video-embed-wrap--native video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-embed-wrap--placeholder {
+    background: var(--bg-soft);
+}
+
+.video-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--text-faint);
+}
+
+.video-placeholder i {
+    font-size: 2.8rem;
+    color: var(--red);
+    opacity: 0.45;
+}
+
+.video-placeholder span {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.video-embed-info {
+    padding: 18px 20px 20px;
+    border-top: 1px solid var(--border);
+}
+
+.video-embed-info h3 {
+    font-size: 1.22rem;
+    font-weight: 400;
+    margin: 6px 0 4px;
+    line-height: 1.2;
+}
+
+.video-embed-info p {
+    font-size: 0.95rem;
+    color: var(--text-soft);
+    line-height: 1.6;
+}
+
+/* ─────────────────────────
+   WIDE PROJECT IMAGE
+───────────────────────── */
+#brand .wide-project-image img,
+#detail .wide-project-image img,
+#cardnews .wide-project-image img {
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+}
+
+.wide-project-image:not(.a4-image) {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+}
+
+.wide-project-image:not(.a4-image) img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ─────────────────────────
+   INSTAGRAM
+───────────────────────── */
+.insta-card {
+    display: flex;
+    justify-content: center;
+}
+
+.instagram-media {
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* ─────────────────────────
+   DETAIL / CARDNEWS
+───────────────────────── */
+#detail .wide-project-image img,
+#cardnews .wide-project-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border: none;
+    box-shadow: none;
+}
+
+#detail .wide-project-list,
+#cardnews .wide-project-list {
+    gap: 80px;
+}
+
+#detail .detail-split,
+#cardnews .detail-split {
+    display: grid;
+    grid-template-columns: 1.45fr 0.55fr;
+    gap: 56px;
+    align-items: center;
+}
+
+#detail .detail-split.reverse,
+#cardnews .detail-split.reverse {
+    grid-template-columns: 0.55fr 1.45fr;
+}
+
+#detail .detail-split.reverse .wide-project-image,
+#cardnews .detail-split.reverse .wide-project-image {
+    order: 2;
+}
+
+#detail .detail-split.reverse .detail-side,
+#cardnews .detail-split.reverse .detail-side {
+    order: 1;
+}
+
+#detail .wide-project-image,
+#cardnews .wide-project-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: auto;
+    overflow: hidden;
+}
+
+#detail .wide-project-image img,
+#cardnews .wide-project-image img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 780px;
+    height: auto;
+    margin: 0 auto;
+    object-fit: contain;
+    object-position: center;
+}
+
+.detail-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100%;
+}
+
+#detail .detail-side .wide-title,
+#cardnews .detail-side .wide-title {
+    margin-bottom: 0;
+}
+
+/* ─────────────────────────
+   VIDEO CLICK
+───────────────────────── */
+.video-click {
+    position: relative;
+    cursor: pointer;
+}
+
+.video-play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    transition: opacity .3s ease;
+}
+
+.video-play-overlay i {
+    font-size: 3rem;
+    color: #fff;
+}
+
+.video-click.playing .video-play-overlay {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ─────────────────────────
+   CONTACT
+───────────────────────── */
+.contact-section {
+    padding-top: 140px;
+    padding-bottom: 140px;
+}
+
+.contact-layout {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 56px;
+    align-items: start;
+}
+
+.contact-info {
+    padding-top: 10px;
+}
+
+.contact-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin-bottom: 14px;
+}
+
+.contact-id {
+    display: inline-block;
+    font-family: 'Cormorant Garamond', 'Noto Serif KR', serif;
+    font-size: clamp(2.2rem, 4.2vw, 3.4rem);
+    line-height: 1.1;
+    color: var(--text);
+    border-bottom: 1px solid rgba(31, 31, 31, 0.14);
+    padding-bottom: 8px;
+    transition: color .25s ease, border-color .25s ease;
+}
+
+.contact-id:hover {
+    color: var(--red);
+    border-color: var(--red);
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.contact-thumb {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--bg-soft);
+}
+
+.contact-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.contact-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.55rem;
+    letter-spacing: 0.08em;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    transition: opacity .35s ease;
+}
+
+.contact-thumb:hover .contact-overlay {
+    opacity: 1;
+}
+
+/* ─────────────────────────
+   HOVER IMAGE MOTION FIX
+───────────────────────── */
+.work-thumb,
+.wide-project-image {
+    overflow: hidden;
+}
+
+.work-thumb img,
+.wide-project-image img {
+    transform: scale(1);
+    transform-origin: center center;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.work-card:hover .work-thumb img,
+.wide-project:hover .wide-project-image img {
+    transform: scale(1.018);
+}
+
+#detail .wide-project:hover .wide-project-image img,
+#cardnews .wide-project:hover .wide-project-image img {
+    transform: scale(1.012);
+}
+
+#brand .wide-project:hover .wide-project-image img {
+    transform: scale(1.016);
+}
+
+/* ─────────────────────────
+   RESPONSIVE — 1200
 ───────────────────────── */
 @media (max-width: 1200px) {
-
     #video .works-grid,
     .works-grid-4 {
         grid-template-columns: repeat(2, 1fr);
@@ -829,8 +1176,19 @@ nav li a.active::after {
         grid-template-columns: 1fr 1fr;
         gap: 40px;
     }
+
+    #detail .detail-split,
+    #detail .detail-split.reverse,
+    #cardnews .detail-split,
+    #cardnews .detail-split.reverse {
+        grid-template-columns: 1fr 1fr;
+        gap: 36px;
+    }
 }
 
+/* ─────────────────────────
+   RESPONSIVE — 900
+───────────────────────── */
 @media (max-width: 900px) {
     .main_video--pc {
         display: none;
@@ -876,399 +1234,10 @@ nav li a.active::after {
     }
 
     nav li a {
-        font-size: 0.92rem; /* 0.85 → 0.92 */
+        font-size: 0.92rem;
         padding: 0.4rem 0.6rem;
     }
-}
 
-
-@media (max-width: 600px) {
-
-    #video .works-grid,
-    .works-grid-4 {
-        grid-template-columns: 1fr;
-    }
-
-    .section-title {
-        font-size: 2rem;
-    }
-
-    .wide-title {
-        font-size: 1.9rem; /* 1.8 → 1.9 */
-    }
-
-    .work-info h3 {
-        font-size: 1.5rem; /* 1.35 → 1.5 */
-    }
-
-    .wide-desc,
-    .work-info p {
-        font-size: 1.08rem; /* 0.96 → 1.08 */
-    }
-
-    .a4-image {
-        max-width: 300px;
-    }
-
-    #footer {
-        padding: 120px 0 52px;
-    }
-
-    #footer::before {
-        background-size: 520px auto;
-    }
-}
-
-/* ─────────────────────────
-   VIDEO EMBED GRID (2×2)
-───────────────────────── */
-.video-embed-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
-}
-
-.video-embed-card {
-    background: rgba(255, 255, 255, 0.88);
-    border: 1px solid var(--border);
-    transition: transform .32s ease, box-shadow .32s ease;
-}
-
-.video-embed-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 28px var(--shadow-soft);
-}
-
-/* 16:9 반응형 iframe 래퍼 */
-.video-embed-wrap {
-    position: relative;
-    width: 100%;
-    padding-bottom: 56.25%;
-    overflow: hidden;
-    background: var(--bg-soft);
-}
-
-.video-embed-wrap iframe {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-}
-
-/* video 태그 전용 래퍼 */
-.video-embed-wrap--native {
-    padding-bottom: 0;
-    aspect-ratio: 16 / 9;
-    background: #000;
-}
-
-.video-embed-wrap--native video {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* 플레이스홀더 */
-.video-embed-wrap--placeholder {
-    background: var(--bg-soft);
-}
-
-.video-placeholder {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    color: var(--text-faint);
-}
-
-.video-placeholder i {
-    font-size: 2.8rem;
-    color: var(--red);
-    opacity: 0.45;
-}
-
-.video-placeholder span {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1rem; /* 0.9 → 1.0 */
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
-
-.video-embed-info {
-    padding: 18px 20px 20px; /* 16 18 18 → 18 20 20 */
-    border-top: 1px solid var(--border);
-}
-
-.video-embed-info h3 {
-    font-size: 1.22rem;
-    font-weight: 400;
-    margin: 6px 0 4px;
-    line-height: 1.2;
-}
-
-.video-embed-info p {
-    font-size: 0.95rem;
-    color: var(--text-soft);
-    line-height: 1.6;
-}
-
-/* 이미지 3:2 강제 — 히어로 제외 전 섹션 */
-#brand .wide-project-image img,
-#detail .wide-project-image img,
-#cardnews .wide-project-image img {
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    width: 100%;
-    height: auto;
-}
-
-/* wide-project 이미지도 3:2 */
-.wide-project-image:not(.a4-image) {
-    aspect-ratio: 3 / 2;
-    overflow: hidden;
-}
-
-.wide-project-image:not(.a4-image) img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* 반응형 — 비디오 그리드 */
-@media (max-width: 900px) {
-    .video-embed-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-    }
-}
-
-@media (max-width: 600px) {
-    .video-embed-grid {
-        gap: 18px;
-    }
-}
-
-/* 인스타 카드 */
-.insta-card {
-    display: flex;
-    justify-content: center;
-}
-
-/* 임베드 크기 정리 */
-.instagram-media {
-    max-width: 100% !important;
-    width: 100% !important;
-}
-
-/* ─────────────────────────
-   DETAIL / CARD — FULL IMAGE
-───────────────────────── */
-#detail .wide-project-image img,
-#cardnews .wide-project-image img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    border: none;
-    box-shadow: none;
-}
-
-#detail .wide-project-list,
-#cardnews .wide-project-list {
-    gap: 80px;
-}
-
-/* ─────────────────────────
-   DETAIL / CARDNEWS SPLIT LAYOUT
-───────────────────────── */
-#detail .detail-split,
-#cardnews .detail-split {
-    display: grid;
-    grid-template-columns: 1.45fr 0.55fr;
-    gap: 56px;
-    align-items: center;
-}
-
-#detail .detail-split.reverse,
-#cardnews .detail-split.reverse {
-    grid-template-columns: 0.55fr 1.45fr;
-}
-
-#detail .detail-split.reverse .wide-project-image,
-#cardnews .detail-split.reverse .wide-project-image {
-    order: 2;
-}
-
-#detail .detail-split.reverse .detail-side,
-#cardnews .detail-split.reverse .detail-side {
-    order: 1;
-}
-
-#detail .wide-project-image,
-#cardnews .wide-project-image,
-#brand .wide-project-image {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-#detail .wide-project-image img,
-#cardnews .wide-project-image img {
-    display: block;
-    width: auto;
-    max-width: 100%;
-    max-height: 780px;
-    height: auto;
-    margin: 0 auto;
-    object-fit: contain;
-    object-position: center;
-}
-
-.detail-side {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100%;
-}
-
-#detail .detail-side .wide-title,
-#cardnews .detail-side .wide-title {
-    margin-bottom: 0;
-}
-
-/* ─────────────────────────
-   CONTACT
-───────────────────────── */
-.contact-section {
-    padding-top: 140px;
-    padding-bottom: 140px;
-}
-
-.contact-layout {
-    display: grid;
-    grid-template-columns: 0.9fr 1.1fr;
-    gap: 56px;
-    align-items: start;
-}
-
-.contact-info {
-    padding-top: 10px;
-}
-
-.contact-label {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.1rem; /* 0.95 → 1.1 */
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-soft);
-    margin-bottom: 14px;
-}
-
-.contact-id {
-    display: inline-block;
-    font-family: 'Cormorant Garamond', 'Noto Serif KR', serif;
-    font-size: clamp(2.2rem, 4.2vw, 3.4rem); /* clamp(2rem, 4vw, 3.2rem) → 키움 */
-    line-height: 1.1;
-    color: var(--text);
-    border-bottom: 1px solid rgba(31, 31, 31, 0.14);
-    padding-bottom: 8px;
-    transition: color .25s ease, border-color .25s ease;
-}
-
-.contact-id:hover {
-    color: var(--red);
-    border-color: var(--red);
-}
-
-.contact-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-}
-
-.contact-thumb {
-    aspect-ratio: 1 / 1;
-    overflow: hidden;
-    background: var(--bg-soft);
-}
-
-.video-click {
-    position: relative;
-    cursor: pointer;
-}
-
-.video-play-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.2);
-    transition: opacity .3s ease;
-}
-
-.video-play-overlay i {
-    font-size: 3rem;
-    color: #fff;
-}
-
-.video-click.playing .video-play-overlay {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.contact-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.contact-thumb {
-    position: relative;
-    overflow: hidden;
-}
-
-.contact-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.55rem; /* 1.4 → 1.55 */
-    letter-spacing: 0.08em;
-    color: #fff;
-    background: rgba(0,0,0,0.35);
-    opacity: 0;
-    transition: opacity .35s ease;
-}
-
-.contact-thumb:hover .contact-overlay {
-    opacity: 1;
-}
-
-/* ─────────────────────────
-   RESPONSIVE
-───────────────────────── */
-@media (max-width: 1200px) {
-    #detail .detail-split,
-    #detail .detail-split.reverse,
-    #cardnews .detail-split,
-    #cardnews .detail-split.reverse {
-        grid-template-columns: 1fr 1fr;
-        gap: 36px;
-    }
-}
-
-@media (max-width: 900px) {
     .section-intro p,
     .section-intro-lg p,
     .wide-desc {
@@ -1297,6 +1266,7 @@ nav li a.active::after {
     .work-info p {
         font-size: 0.94rem;
     }
+
     #detail .detail-split,
     #detail .detail-split.reverse,
     #cardnews .detail-split,
@@ -1320,13 +1290,31 @@ nav li a.active::after {
     #cardnews .wide-project-image img {
         max-height: none;
     }
+
+    .video-embed-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
 }
 
+/* ─────────────────────────
+   RESPONSIVE — 600
+───────────────────────── */
 @media (max-width: 600px) {
-    .contact-grid {
+    #video .works-grid,
+    .works-grid-4 {
         grid-template-columns: 1fr;
     }
- .section-intro p,
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .wide-title {
+        font-size: 1.9rem;
+    }
+
+    .section-intro p,
     .section-intro-lg p,
     .wide-desc,
     .work-info p {
@@ -1355,39 +1343,24 @@ nav li a.active::after {
     .video-embed-info p {
         font-size: 0.9rem;
     }
-}
-/* =========================
-   HOVER IMAGE MOTION FIX
-========================= */
 
-/* 공통 썸네일 이미지 */
-.work-thumb,
-.wide-project-image {
-    overflow: hidden;
-}
+    .a4-image {
+        max-width: 300px;
+    }
 
-.work-thumb img,
-.wide-project-image img {
-    transform: scale(1);
-    transform-origin: center center;
-    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform;
-    backface-visibility: hidden;
-}
+    #footer {
+        padding: 120px 0 52px;
+    }
 
-/* 기존보다 덜 튀게 확대 */
-.work-card:hover .work-thumb img,
-.wide-project:hover .wide-project-image img {
-    transform: scale(1.018);
-}
+    #footer::before {
+        background-size: 520px auto;
+    }
 
-/* detail / cardnews는 특히 더 예민해서 확대값 더 낮춤 */
-#detail .wide-project:hover .wide-project-image img,
-#cardnews .wide-project:hover .wide-project-image img {
-    transform: scale(1.012);
-}
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
 
-/* brand website 이미지도 살짝만 */
-#brand .wide-project:hover .wide-project-image img {
-    transform: scale(1.016);
+    .video-embed-grid {
+        gap: 18px;
+    }
 }
