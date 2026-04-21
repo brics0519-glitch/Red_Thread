@@ -407,14 +407,18 @@ nav li a.active::after {
 }
 
 .work-thumb img {
-    width: 100%;
+  width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform .55s ease;
+    transform: scale(1);
+    transform-origin: center center;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .work-card:hover .work-thumb img {
-    transform: scale(1.03);
+   transform: scale(1.018);
 }
 
 .work-info {
@@ -1359,4 +1363,39 @@ nav li a.active::after {
     .video-embed-info p {
         font-size: 0.9rem;
     }
+}
+/* =========================
+   HOVER IMAGE MOTION FIX
+========================= */
+
+/* 공통 썸네일 이미지 */
+.work-thumb,
+.wide-project-image {
+    overflow: hidden;
+}
+
+.work-thumb img,
+.wide-project-image img {
+    transform: scale(1);
+    transform-origin: center center;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+/* 기존보다 덜 튀게 확대 */
+.work-card:hover .work-thumb img,
+.wide-project:hover .wide-project-image img {
+    transform: scale(1.018);
+}
+
+/* detail / cardnews는 특히 더 예민해서 확대값 더 낮춤 */
+#detail .wide-project:hover .wide-project-image img,
+#cardnews .wide-project:hover .wide-project-image img {
+    transform: scale(1.012);
+}
+
+/* brand website 이미지도 살짝만 */
+#brand .wide-project:hover .wide-project-image img {
+    transform: scale(1.016);
 }
