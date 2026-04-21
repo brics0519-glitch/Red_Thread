@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시오타 치하루의 붉은 실 - Shiota's Red Threads</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #ffffff;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+        }
+        #ui-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #880000;
+            pointer-events: none;
+            z-index: 10;
+        }
+        h1 {
+            font-weight: 200;
+            letter-spacing: 0.2em;
+            margin: 0;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+        .status {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            opacity: 0.6;
+            text-transform: uppercase;
+        }
+        #instruction {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #aa0000;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui-overlay">
+        <h1>RED MEMORY: FULL FORMATION</h1>
+        <div id="current-state" class="status">Initializing...</div>
+    </div>
+
+    <div id="instruction">마우스로 시점을 조절하여 실의 완전한 형상을 관찰하세요.</div>
+    <div id="canvas-container"></div>
+
+    <script>
+        /**
+         * Chiharu Shiota Style Thread Animation - Fixed Clipping Version
+         * Sequence: Scattering -> Clustering -> "Min Jae Kang" -> "PORTFOLIO" -> Maintaining -> Dissolving
+         */
+
+        let scene, camera, renderer, particles, lines, lineGeometry;
+        const particleCount = 12000; // 입자 수를 12,000개로 증설하여 잘림 방지
+        const targetPositions = [];
+        
+        let state = 0; 
+        let stateTimer = 0;
+        const stateDurations = [4000, 3000, 5500, 5500, 4000, 4000]; 
+        const stateNames = [
+            "산개 (Scattering)", 
+            "뭉침 (Clustering)", 
+            "이름 형성 (Min Jae Kang)", 
+            "주제 형성 (PORTFOLIO)", 
+            "유지 (Maintaining)", 
+            "해체 (Dissolving)"
+        ];
+
+        let namePoints = [];
+        let portfolioPoints = [];
+
+        window.onload = function() {
+            init();
+            // 가로 너비 1200px로 확장하여 긴 텍스트 수용
+            namePoints = createTextPoints("Min Jae Kang", 80, 1200);
+            portfolioPoints = createTextPoints("PORTFOLIO", 90, 1200);
+            animate();
+        };
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff);
+            scene.fog = new THREE.FogExp2(0xffffff, 0.006);
+
+            camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1500);
+            camera.position.z = 110; // 텍스트 전체를 담기 위해 카메라 거리 조정
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            const geometry = new THREE.BufferGeometry();
+            const posArray = new Float32Array(particleCount * 3);
+            
+            for(let i = 0; i < particleCount; i++) {
+                const x = (Math.random() - 0.5) * 200;
+                const y = (Math.random() - 0.5) * 200;
+                const z = (Math.random() - 0.5) * 200;
+                posArray[i*3] = x;
+                posArray[i*3+1] = y;
+                posArray[i*3+2] = z;
+                targetPositions.push({x, y, z});
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            const material = new THREE.PointsMaterial({
+                color: 0xaa0000,
+                size: 0.16,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            lineGeometry = new THREE.BufferGeometry();
+            const lineCount = 3000; // 입자 증가에 맞춰 실의 수도 증가
+            const linePosArray = new Float32Array(lineCount * 2 * 3);
+            lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePosArray, 3));
+            
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0xaa0000,
+                transparent: true,
+                opacity: 0.07,
+                linewidth: 1
+            });
+
+            lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+            scene.add(lines);
+
+            window.addEventListener('resize', onWindowResize, false);
+            
+            document.addEventListener('mousemove', (e) => {
+                const mouseX = (e.clientX - window.innerWidth / 2) * 0.025;
+                const mouseY = (e.clientY - window.innerHeight / 2) * 0.025;
+                camera.position.x += (mouseX - camera.position.x) * 0.05;
+                camera.position.y += (-mouseY - camera.position.y) * 0.05;
+            });
+        }
+
+        function createTextPoints(text, fontSize, canvasWidth) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvasWidth;
+            canvas.height = 300; // 캔버스 높이 확보
+            
+            ctx.fillStyle = 'black';
+            ctx.font = `bold ${fontSize}px "serif", "Times New Roman"`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, canvasWidth/2, 150);
+            
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            const points = [];
+            
+            // 샘플링 간격을 2로 조정하여 입자 소모량을 줄이면서도 전체 형태 유지
+            const step = 2;
+            for(let y = 0; y < canvas.height; y += step) {
+                for(let x = 0; x < canvas.width; x += step) {
+                    const alpha = imageData[(y * canvas.width + x) * 4 + 3];
+                    if(alpha > 130) {
+                        points.push({
+                            x: (x - canvasWidth/2) * 0.16,
+                            y: (150 - y) * 0.16,
+                            z: (Math.random() - 0.5) * 1.0
+                        });
+                    }
+                }
+            }
+            return points;
+        }
+
+        function updateState() {
+            const now = Date.now();
+            if(!this.lastUpdate) this.lastUpdate = now;
+            
+            stateTimer += (now - this.lastUpdate);
+            this.lastUpdate = now;
+
+            if(stateTimer > stateDurations[state]) {
+                stateTimer = 0;
+                state = (state + 1) % 6;
+                document.getElementById('current-state').innerText = stateNames[state];
+                setNewTargets();
+            }
+        }
+
+        function setNewTargets() {
+            for(let i = 0; i < particleCount; i++) {
+                switch(state) {
+                    case 0: // Scatter
+                        targetPositions[i] = {
+                            x: (Math.random() - 0.5) * 220,
+                            y: (Math.random() - 0.5) * 220,
+                            z: (Math.random() - 0.5) * 220
+                        };
+                        break;
+                    case 1: // Cluster
+                        const angle = Math.random() * Math.PI * 2;
+                        const radius = Math.random() * 30;
+                        targetPositions[i] = {
+                            x: Math.cos(angle) * radius,
+                            y: Math.sin(angle) * radius,
+                            z: (Math.random() - 0.5) * 25
+                        };
+                        break;
+                    case 2: // "Min Jae Kang"
+                        const nIdx = i % namePoints.length; // 입자가 부족하면 안되겠지만 안전하게 모듈로 연산
+                        if (i < namePoints.length * 1.5) { // 충분한 밀도를 위해 약간의 중복 허용
+                             targetPositions[i] = { x: namePoints[nIdx].x, y: namePoints[nIdx].y, z: namePoints[nIdx].z };
+                        } else {
+                            const a = Math.random() * Math.PI * 2;
+                            const r = 70 + Math.random() * 50;
+                            targetPositions[i] = { x: Math.cos(a) * r, y: Math.sin(a) * r, z: -50 - Math.random() * 50 };
+                        }
+                        break;
+                    case 3: // "PORTFOLIO"
+                        const pIdx = i % portfolioPoints.length;
+                        if (i < portfolioPoints.length * 1.5) {
+                            targetPositions[i] = { x: portfolioPoints[pIdx].x, y: portfolioPoints[pIdx].y, z: portfolioPoints[pIdx].z };
+                        } else {
+                            const a = Math.random() * Math.PI * 2;
+                            const r = 80 + Math.random() * 60;
+                            targetPositions[i] = { x: Math.cos(a) * r, y: Math.sin(a) * r, z: -50 - Math.random() * 50 };
+                        }
+                        break;
+                    case 4: // Maintain
+                        break;
+                    case 5: // Dissolve
+                        targetPositions[i] = {
+                            x: (Math.random() - 0.5) * 300,
+                            y: (Math.random() - 0.5) * 300,
+                            z: (Math.random() - 0.5) * 300
+                        };
+                        break;
+                }
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            updateState();
+
+            const posAttr = particles.geometry.attributes.position;
+            const linePosAttr = lines.geometry.attributes.position;
+            
+            for(let i = 0; i < particleCount; i++) {
+                let target = targetPositions[i];
+                
+                if(state === 4) {
+                    target.x += Math.sin(Date.now() * 0.001 + i) * 0.008;
+                    target.y += Math.cos(Date.now() * 0.001 + i) * 0.008;
+                }
+
+                const lerpSpeed = (state === 2 || state === 3) ? 0.07 : 0.04;
+                posAttr.array[i*3] += (target.x - posAttr.array[i*3]) * lerpSpeed;
+                posAttr.array[i*3+1] += (target.y - posAttr.array[i*3+1]) * lerpSpeed;
+                posAttr.array[i*3+2] += (target.z - posAttr.array[i*3+2]) * lerpSpeed;
+            }
+            
+            posAttr.needsUpdate = true;
+
+            const lineCount = lines.geometry.attributes.position.count / 2;
+            for(let i = 0; i < lineCount; i++) {
+                const p1Index = i * 2;
+                const p2Index = (i * 2 + 12) % particleCount; 
+                
+                linePosAttr.array[i * 6] = posAttr.array[p1Index * 3];
+                linePosAttr.array[i * 6 + 1] = posAttr.array[p1Index * 3 + 1];
+                linePosAttr.array[i * 6 + 2] = posAttr.array[p1Index * 3 + 2];
+                
+                linePosAttr.array[i * 6 + 3] = posAttr.array[p2Index * 3];
+                linePosAttr.array[i * 6 + 4] = posAttr.array[p2Index * 3 + 1];
+                linePosAttr.array[i * 6 + 5] = posAttr.array[p2Index * 3 + 2];
+            }
+            linePosAttr.needsUpdate = true;
+
+            const rotationSpeed = (state === 2 || state === 3) ? 0.0001 : 0.0006;
+            particles.rotation.y += rotationSpeed;
+            lines.rotation.y += rotationSpeed;
+
+            camera.lookAt(scene.position);
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+    </script>
+</body>
+</html>
