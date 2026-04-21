@@ -40,7 +40,7 @@
 <body>
 
     <div id="ui-overlay">
-        <h1>The Red Thread of Fate</h1>
+        <h1>Red Memory</h1>
     </div>
 
     <div id="canvas-container"></div>
@@ -135,45 +135,30 @@
 
         function createPreciseEyePoints() {
             const points = [];
-            const w = 80; 
-            const h = 30; 
+            const w = 75; 
+            const h = 28; 
             
-            // 1. 비대칭 눈꺼풀 (Eyelids) - 불안정하고 거친 느낌
-            for (let i = 0; i < 6000; i++) {
-                const t = (i / 6000) * 2 - 1;
+            // 1. 눈꺼풀 (Eyelids) - 가독성을 위해 외곽선 강조
+            for (let i = 0; i < 5000; i++) {
+                const t = (i / 5000) * 2 - 1;
                 const x = t * w;
-                // 위아래 비대칭 + 노이즈 추가
-                let upperY = Math.cos(t * Math.PI * 0.5) * h * (0.8 + Math.random() * 0.4) + Math.sin(t * Math.PI * 3) * 5;
-                let lowerY = -Math.cos(t * Math.PI * 0.5) * h * (0.6 + Math.random() * 0.6) + Math.sin(t * Math.PI * 2) * 5;
+                const curve = Math.sqrt(1 - Math.pow(t, 2)); // 원형에 가까운 곡선
+                const upperY = curve * h;
+                const lowerY = -curve * h;
                 const y = Math.random() > 0.5 ? upperY : lowerY;
-                points.push({ x: x * 0.45, y: y * 0.45, z: (Math.random() - 0.5) * 5 });
+                points.push({ x: x * 0.45, y: y * 0.45, z: 0 });
             }
 
-            // 2. 찌그러진 홍채와 동공 (Distorted Iris & Pupil)
+            // 2. 홍채와 동공 (Iris & Pupil)
             const irisRadius = 15;
-            for (let i = 0; i < 7000; i++) {
+            for (let i = 0; i < 6000; i++) {
                 const angle = Math.random() * Math.PI * 2;
                 const r = Math.sqrt(Math.random()) * irisRadius;
-                // 홍채도 비대칭 타원형으로
-                const r_x = r * (1 + Math.sin(angle * 2) * 0.15);
-                const r_y = r * (1 + Math.cos(angle * 3) * 0.2);
-                
                 const isPupil = r < 6;
                 points.push({
-                    x: Math.cos(angle) * r_x * 0.45 + (Math.random() - 0.5) * 5, // 위치도 불안정하게
-                    y: Math.sin(angle) * r_y * 0.45 + (Math.random() - 0.5) * 5,
-                    z: isPupil ? 2.5 + Math.random() : 1.0 + Math.random() // 깊이감도 불규칙하게
-                });
-            }
-            
-            // 3. 눈 주변에 불규칙하게 얽힌 실타래 추가
-            for (let i = 0; i < 4000; i++) {
-                const a = Math.random() * Math.PI * 2;
-                const r = 40 + Math.random() * 60;
-                points.push({
-                    x: Math.cos(a) * r * 0.45 + (Math.random()-0.5)*20,
-                    y: Math.sin(a) * r * 0.45 + (Math.random()-0.5)*20,
-                    z: (Math.random() - 0.5) * 30
+                    x: Math.cos(angle) * r * 0.45,
+                    y: Math.sin(angle) * r * 0.45,
+                    z: isPupil ? 1.5 : 0.5
                 });
             }
             return points;
@@ -309,4 +294,46 @@
             for(let i = 0; i < particleCount; i++) {
                 let target = targetPositions[i];
                 const off = originalOffsets[i];
-                const breathe = isForm
+                const breathe = isForming ? 0 : Math.sin(time * off.speed + off.phase) * off.amplitude;
+
+                // 이동 속도 가속
+                const lerpSpeed = (state === 3) ? 0.45 : (isForming ? 0.12 : 0.02);
+                
+                posAttr.array[i*3] += (target.x + breathe - posAttr.array[i*3]) * lerpSpeed;
+                posAttr.array[i*3+1] += (target.y + breathe - posAttr.array[i*3+1]) * lerpSpeed;
+                posAttr.array[i*3+2] += (target.z + breathe - posAttr.array[i*3+2]) * lerpSpeed;
+            }
+            
+            posAttr.needsUpdate = true;
+
+            // 실의 연결 - 간격을 좁혀서(p2 = p1+3) 글자를 가로지르는 긴 실 방지
+            const lineCount = lines.geometry.attributes.position.count / 2;
+            for(let i = 0; i < lineCount; i++) {
+                const p1 = i * 2;
+                const p2 = (i * 2 + 4) % particleCount; 
+                linePosAttr.array[i * 6] = posAttr.array[p1 * 3];
+                linePosAttr.array[i * 6 + 1] = posAttr.array[p1 * 3 + 1];
+                linePosAttr.array[i * 6 + 2] = posAttr.array[p1 * 3 + 2];
+                linePosAttr.array[i * 6 + 3] = posAttr.array[p2 * 3];
+                linePosAttr.array[i * 6 + 4] = posAttr.array[p2 * 3 + 1];
+                linePosAttr.array[i * 6 + 5] = posAttr.array[p2 * 3 + 2];
+            }
+            linePosAttr.needsUpdate = true;
+
+            const isStatic = (state === 1 || state === 2 || state === 4);
+            const rSpeed = isStatic ? 0.00005 : 0.0006;
+            particles.rotation.y += rSpeed;
+            lines.rotation.y += rSpeed;
+
+            camera.lookAt(scene.position);
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+    </script>
+</body>
+</html>
