@@ -1113,10 +1113,10 @@ nav li a.active::after {
 .contact-thread-deco {
     width: 100%;
     max-width: 420px;
-    height: 220px;
+    height: 300px;
     margin-top: 28px;
     overflow: hidden;
-    border: 1px solid rgba(31, 31, 31, 0.08);
+    border: none;
     background: #fff;
 }
 
