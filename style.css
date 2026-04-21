@@ -570,8 +570,8 @@ nav li a.active::after {
 
 
 .wide-desc {
-    font-size: 1.02rem;
-    line-height: 1.9;
+    font-size: 1.45rem;
+    line-height: 1.95;
     color: var(--text-strong);
     margin-bottom: 10px;
 }
