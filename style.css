@@ -312,7 +312,26 @@ nav li a.active::after {
 #video .section-intro-lg p {
     font-size: 1.45rem;
 }
+.video-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
 
+.video-meta-row p {
+    margin: 0;
+}
+
+.sketch-btn {
+    min-width: auto;
+    min-height: 42px;
+    padding: 8px 18px;
+    font-size: 0.98rem;
+    white-space: nowrap;
+}
 /* ─────────────────────────
    GRID WORKS
 ───────────────────────── */
