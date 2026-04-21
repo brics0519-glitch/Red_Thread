@@ -559,14 +559,7 @@ nav li a.active::after {
 .wide-project-content {
     max-width: 500px;
 }
-.wide-project-image {
-    cursor: pointer;
-    transition: transform .3s ease;
-}
 
-.wide-project-image:hover img {
-    transform: scale(1.02);
-}
 #brand .wide-project-content {
     max-width: 560px;
 }
@@ -1118,14 +1111,13 @@ nav li a.active::after {
 }
 
 #detail .wide-project-image,
-#cardnews .wide-project-image {
+#cardnews .wide-project-image,
+#brand .wide-project-image {
     display: flex;
     align-items: center;
     justify-content: center;
-    aspect-ratio: auto;
-    overflow: visible;
+    overflow: hidden;
 }
-
 #detail .wide-project-image img,
 #cardnews .wide-project-image img {
     display: block;
