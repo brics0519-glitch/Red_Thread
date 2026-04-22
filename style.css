@@ -1089,7 +1089,6 @@ nav li a.active::after {
     font-size: clamp(2.2rem, 4.2vw, 3.4rem);
     line-height: 1.1;
     color: var(--text);
-    border-bottom: 1px solid rgba(31, 31, 31, 0.14);
     padding-bottom: 8px;
     margin-bottom: 64px;
     transition: color .25s ease, border-color .25s ease;
