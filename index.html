@@ -18,6 +18,201 @@
         rel="stylesheet">
     <link rel="icon" type="image/png" href="./img/favicon_redthread.png" sizes="32x32">
     <link rel="stylesheet" href="style.css">
+
+    <!-- ── 모달 스타일 (새로 추가) ── -->
+    <style>
+    /* ─────────────────────────────────────────────
+       MODAL BASE
+    ───────────────────────────────────────────── */
+    .kv-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(251, 251, 250, 0.97);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      opacity: 0;
+      transition: opacity 0.30s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .kv-modal.is-open    { display: flex; }
+    .kv-modal.is-visible { opacity: 1; }
+
+    /* ── 상단 바 ── */
+    .kv-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 0 14px;
+    }
+
+    /* PREV / NEXT 버튼 */
+    .kv-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.88rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(31, 31, 31, 0.50);
+      background: transparent;
+      border: 1px solid rgba(31, 31, 31, 0.13);
+      padding: 8px 22px;
+      cursor: pointer;
+      transition: color 0.22s, border-color 0.22s, background 0.22s;
+      white-space: nowrap;
+      min-width: 88px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .kv-btn:hover {
+      color: #aa2e2e;
+      border-color: rgba(170, 46, 46, 0.30);
+      background: rgba(170, 46, 46, 0.04);
+    }
+    .kv-btn.is-dim {
+      opacity: 0.28;
+      pointer-events: none;
+    }
+
+    /* 페이지 인디케이터 */
+    .kv-page-info {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.84rem;
+      letter-spacing: 0.22em;
+      color: rgba(31, 31, 31, 0.35);
+      text-align: center;
+      flex: 1;
+      min-width: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+    .kv-page-info em {           /* 현재 페이지 — 레드 강조 */
+      font-style: normal;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #aa2e2e;
+      letter-spacing: 0.08em;
+    }
+
+    /* CLOSE 버튼 */
+    .kv-close {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.88rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(31, 31, 31, 0.50);
+      background: transparent;
+      border: 1px solid rgba(31, 31, 31, 0.13);
+      padding: 8px 22px;
+      cursor: pointer;
+      transition: color 0.22s, border-color 0.22s, background 0.22s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .kv-close:hover {
+      color: #aa2e2e;
+      border-color: rgba(170, 46, 46, 0.30);
+      background: rgba(170, 46, 46, 0.04);
+    }
+    /* 순수 CSS × 아이콘 */
+    .kv-close-x {
+      display: inline-block;
+      width: 11px;
+      height: 11px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .kv-close-x::before,
+    .kv-close-x::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 0;
+      width: 100%; height: 1.2px;
+      background: currentColor;
+      transform-origin: center;
+    }
+    .kv-close-x::before { transform: translateY(-50%) rotate(45deg); }
+    .kv-close-x::after  { transform: translateY(-50%) rotate(-45deg); }
+
+    /* ── e-book 스테이지 ── */
+    .kv-stage {
+      position: relative;
+      background: #fff;
+      border: 1px solid rgba(31, 31, 31, 0.09);
+      box-shadow:
+        0 2px 6px rgba(170, 46, 46, 0.04),
+        0 12px 32px rgba(0, 0, 0, 0.06),
+        0 40px 80px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+    .kv-stage iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ── 하단 힌트 ── */
+    .kv-hint {
+      margin-top: 12px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.70rem;
+      letter-spacing: 0.18em;
+      color: rgba(31, 31, 31, 0.20);
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* ── 닷 인디케이터 ── */
+    .kv-dots {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 13px;
+      flex-wrap: wrap;
+    }
+    .kv-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(31, 31, 31, 0.15);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.25s, transform 0.25s;
+      flex-shrink: 0;
+    }
+    .kv-dot.is-active {
+      background: #aa2e2e;
+      transform: scale(1.45);
+    }
+
+    /* ── 모바일 ≤ 600px ── */
+    @media (max-width: 600px) {
+      .kv-bar { padding-bottom: 10px; gap: 6px; }
+      .kv-btn, .kv-close {
+        font-size: 0.75rem;
+        padding: 7px 12px;
+        min-width: 60px;
+        letter-spacing: 0.08em;
+      }
+      .kv-btn-label { display: none; } /* 텍스트 숨기고 화살표만 */
+      .kv-page-info { font-size: 0.78rem; letter-spacing: 0.12em; }
+      .kv-page-info em { font-size: 0.95rem; }
+      .kv-hint { font-size: 0.62rem; letter-spacing: 0.10em; }
+      .kv-dots { gap: 5px; }
+    }
+    </style>
 </head>
 
 <body>
@@ -222,7 +417,7 @@
                 <div class="sec-rule"></div>
             </div>
             <div class="section-intro" data-aos="fade-up" data-aos-delay="100">
-                <p>제품을 ‘판매 단위’가 아닌, 공간 안에서의 경험 요소로 설계하는 데 집중했습니다.</p>
+                <p>제품을 '판매 단위'가 아닌, 공간 안에서의 경험 요소로 설계하는 데 집중했습니다.</p>
             </div>
             <div class="works-grid works-grid-3">
                 <a href="#" class="work-card" data-aos="fade-up">
@@ -362,7 +557,6 @@
 </section>
 <!-- CONTACT -->
 <section class="section works-section contact-section" id="contact" style="position:relative; overflow:hidden;">
-    <!-- Red Thread Background Canvas -->
     <canvas id="threadCanvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; opacity:0.13; z-index:0;"></canvas>
     <div class="container" style="position:relative; z-index:1;">
         <div class="section-head" data-aos="fade-up">
@@ -384,35 +578,25 @@
                     bakingstudiobyp
                 </a>
                <br>
-               <p class="contact-closing">
-브랜드와 제품, 콘텐츠를 하나의 스토리로 설계합니다.
-</p>
-<p class="contact-closing">
-새로운 경험을 받아들이고, 그것을 결과로 연결하며,
-</p>
-<p class="contact-closing">
-그 과정을 디자인으로 완성합니다.
-</p>
-<p class="contact-closing">
-저에게 디자인은 고민을 통해 답을 만들어가는 과정입니다.
-</p>            </div>
+               <p class="contact-closing">브랜드와 제품, 콘텐츠를 하나의 스토리로 설계합니다.</p>
+               <p class="contact-closing">새로운 경험을 받아들이고, 그것을 결과로 연결하며,</p>
+               <p class="contact-closing">그 과정을 디자인으로 완성합니다.</p>
+               <p class="contact-closing">저에게 디자인은 고민을 통해 답을 만들어가는 과정입니다.</p>
+            </div>
 
             <div class="contact-grid">
                <div class="contact-thumb">
     <img src="./img/contact1.png">
     <div class="contact-overlay">Passion</div>
 </div>
-
 <div class="contact-thumb">
     <img src="./img/contact2.jpg">
     <div class="contact-overlay">Flow</div>
 </div>
-
 <div class="contact-thumb">
     <img src="./img/contact3.jpg">
     <div class="contact-overlay">Sociable</div>
 </div>
-
 <div class="contact-thumb">
     <img src="./img/contact4.jpg">
     <div class="contact-overlay">Active</div>
@@ -423,358 +607,407 @@
 </section>
 
 
-    <!-- EBOOK MODAL -->
-    <div id="ebookModal" style="display:none; position:fixed; inset:0; background:rgba(10,10,10,0.88); z-index:99999; align-items:center; justify-content:center; flex-direction:column;">
+    <!-- ════════════════════════════════════════════
+         EBOOK MODAL (새로 디자인)
+    ════════════════════════════════════════════ -->
+    <div id="ebookModal" class="kv-modal" aria-modal="true" role="dialog" aria-label="상세기술서">
 
-        <!-- 상단 컨트롤 바 -->
-        <div id="ebookBar" style="
-            display:flex; align-items:center; justify-content:space-between;
-            width:100%; max-width:1400px;
-            padding: 0 12px 10px;
-            gap: 16px;
-        ">
-            <!-- 이전 버튼 -->
-            <button onclick="ebookPrev()" id="btnPrev" title="이전 페이지 (←)" style="
-                font-family:'Cormorant Garamond',serif;
-                font-size:0.92rem; letter-spacing:0.1em;
-                color:rgba(255,255,255,0.55); background:transparent;
-                border:1px solid rgba(255,255,255,0.18);
-                padding:7px 20px; cursor:pointer;
-                transition:all .22s ease;
-            " onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.55)'"
-               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.18)'">
-                ← PREV
-            </button>
+      <!-- 상단 바: ← PREV | 현재/전체 | CLOSE | NEXT → -->
+      <div class="kv-bar" id="ebookBar">
+        <button class="kv-btn kv-btn-prev is-dim" id="ebookPrevBtn" aria-label="이전 페이지 (←)">
+          ← <span class="kv-btn-label">PREV</span>
+        </button>
 
-            <!-- 페이지 표시 -->
-            <span id="ebookPageInfo" style="font-family:'Cormorant Garamond',serif; font-size:0.88rem; letter-spacing:0.16em; color:rgba(255,255,255,0.4); min-width:80px; text-align:center;">
-                — / —
-            </span>
-
-            <!-- 닫기 버튼 -->
-            <button onclick="closeEbookModal()" title="닫기 (ESC)" style="
-                font-family:'Cormorant Garamond',serif;
-                font-size:0.92rem; letter-spacing:0.1em;
-                color:rgba(255,255,255,0.55); background:transparent;
-                border:1px solid rgba(255,255,255,0.18);
-                padding:7px 20px; cursor:pointer;
-                transition:all .22s ease;
-                margin-left:auto;
-            " onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.55)'"
-               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.18)'">
-                CLOSE ✕
-            </button>
-
-            <!-- 다음 버튼 -->
-            <button onclick="ebookNext()" id="btnNext" title="다음 페이지 (→)" style="
-                font-family:'Cormorant Garamond',serif;
-                font-size:0.92rem; letter-spacing:0.1em;
-                color:rgba(255,255,255,0.55); background:transparent;
-                border:1px solid rgba(255,255,255,0.18);
-                padding:7px 20px; cursor:pointer;
-                transition:all .22s ease;
-            " onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.55)'"
-               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.18)'">
-                NEXT →
-            </button>
+        <div class="kv-page-info" id="ebookPageInfo">
+          <em>1</em>&ensp;<span style="color:rgba(31,31,31,0.22)">/</span>&ensp;<span>14</span>
         </div>
 
-        <!-- ebook iframe — 크기는 JS가 동적 계산 -->
-        <div id="ebookWrap" style="position:relative; overflow:hidden; background:#111;">
-            <iframe id="ebookFrame" src="" style="width:100%; height:100%; border:none; display:block;" allowfullscreen></iframe>
-        </div>
+        <button class="kv-close" id="ebookCloseBtn" aria-label="닫기 (ESC)">
+          CLOSE <span class="kv-close-x"></span>
+        </button>
 
-        <!-- 하단 힌트 -->
-        <p style="margin-top:10px; font-family:'Cormorant Garamond',serif; font-size:0.78rem; letter-spacing:0.14em; color:rgba(255,255,255,0.22); text-transform:uppercase;">
-            ← → 키 또는 버튼으로 페이지 이동 &nbsp;|&nbsp; ESC 로 닫기
-        </p>
+        <button class="kv-btn kv-btn-next" id="ebookNextBtn" aria-label="다음 페이지 (→)">
+          <span class="kv-btn-label">NEXT</span> →
+        </button>
+      </div>
+
+      <!-- e-book iframe -->
+      <div class="kv-stage" id="ebookWrap">
+        <iframe id="ebookFrame" src="" allowfullscreen></iframe>
+      </div>
+
+      <!-- 닷 인디케이터 -->
+      <div class="kv-dots" id="ebookDots"></div>
+
+      <!-- 키보드 힌트 -->
+      <p class="kv-hint">← → 키 또는 버튼으로 페이지 이동 &nbsp;·&nbsp; ESC 닫기</p>
     </div>
 
     <script>
     (function () {
-        /* ── 상수 ── */
-        var BOOK_W  = 1830;      // turn.js width
-        var BOOK_H  = 650.27;    // turn.js height
-        var RATIO   = BOOK_W / BOOK_H;  // ~2.814
-        var TOTAL_PAGES = 14;    // index_ebook.html pages 값과 동일하게
+      var BOOK_W      = 1830;
+      var BOOK_H      = 650.27;
+      var RATIO       = BOOK_W / BOOK_H;
+      var TOTAL_PAGES = 14;
 
-        var modal   = document.getElementById('ebookModal');
-        var wrap    = document.getElementById('ebookWrap');
-        var frame   = document.getElementById('ebookFrame');
-        var info    = document.getElementById('ebookPageInfo');
-        var _currentPage = 1;
+      var modal    = document.getElementById('ebookModal');
+      var wrap     = document.getElementById('ebookWrap');
+      var frame    = document.getElementById('ebookFrame');
+      var bar      = document.getElementById('ebookBar');
+      var infoEl   = document.getElementById('ebookPageInfo');
+      var prevBtn  = document.getElementById('ebookPrevBtn');
+      var nextBtn  = document.getElementById('ebookNextBtn');
+      var closeBtn = document.getElementById('ebookCloseBtn');
+      var dotsEl   = document.getElementById('ebookDots');
+      var _cur = 1;
 
-        /* ── 크기 계산 ── */
-        function calcSize() {
-            var vw = window.innerWidth  * 0.95;
-            var vh = window.innerHeight * 0.78;  // 컨트롤 바·힌트 여유
-            var w, h;
-            if (vw / vh > RATIO) {
-                h = vh; w = h * RATIO;
-            } else {
-                w = vw; h = w / RATIO;
-            }
-            // 짝수로 맞추기 (turn.js 요구사항)
-            w = Math.floor(w / 2) * 2;
-            h = Math.round(h);
-            return { w: w, h: h };
+      /* ── 닷 빌드 ── */
+      function buildDots() {
+        dotsEl.innerHTML = '';
+        var views = Math.ceil(TOTAL_PAGES / 2) + 1;
+        for (var i = 1; i <= views; i++) {
+          var d = document.createElement('button');
+          d.className = 'kv-dot' + (i === 1 ? ' is-active' : '');
+          d.setAttribute('aria-label', i + '번째 뷰');
+          d.addEventListener('click', (function (v) {
+            return function () { ebookTurn(v <= 1 ? 1 : (v - 1) * 2); };
+          })(i));
+          dotsEl.appendChild(d);
         }
+      }
 
-        function applySize() {
-            var s = calcSize();
-            wrap.style.width  = s.w + 'px';
-            wrap.style.height = s.h + 'px';
-            // iframe 내부 turn.js resize 트리거
-            try {
-                var doc = frame.contentWindow;
-                if (doc && doc.jQuery) {
-                    doc.jQuery(doc).trigger('resize');
-                }
-            } catch(e) {}
-        }
+      function updateDots(page) {
+        var view = page <= 1 ? 0 : Math.ceil((page - 1) / 2);
+        dotsEl.querySelectorAll('.kv-dot').forEach(function (d, i) {
+          d.classList.toggle('is-active', i === view);
+        });
+      }
 
-        /* ── 페이지 넘기기 ── */
-        function ebookTurn(page) {
-            try {
-                var $ = frame.contentWindow.jQuery;
-                if (!$) return;
-                var book = $('.magazine', frame.contentDocument);
-                if (!book.length || !book.turn('is')) return;
-                book.turn('page', page);
-                _currentPage = book.turn('page');
-                updateInfo();
-            } catch(e) {}
-        }
+      /* ── 크기 계산: 실제 UI 요소 높이를 뺀 최대 크기 ── */
+      function calcSize() {
+        var barH  = bar.offsetHeight  || 52;
+        var dotsH = dotsEl.offsetHeight || 20;
+        var hintH = 36;
+        var padV  = 48;
+        var padH  = 32;
 
-        function updateInfo() {
-            try {
-                var $ = frame.contentWindow.jQuery;
-                if (!$) return;
-                var book = $('.magazine', frame.contentDocument);
-                if (!book.length) return;
-                var p = book.turn('page');
-                var total = book.turn('pages');
-                info.textContent = p + ' / ' + total;
-                _currentPage = p;
-            } catch(e) {}
-        }
+        var avW = window.innerWidth  - padH * 2;
+        var avH = window.innerHeight - barH - dotsH - hintH - padV * 2;
 
-        window.ebookPrev = function () { ebookTurn(_currentPage - 2 < 1 ? 1 : _currentPage - 2); };
-        window.ebookNext = function () { ebookTurn(_currentPage + 2 > TOTAL_PAGES ? TOTAL_PAGES : _currentPage + 2); };
+        var w, h;
+        if (avW / avH > RATIO) { h = avH; w = h * RATIO; }
+        else                    { w = avW; h = w / RATIO; }
 
-        /* ── 열기 / 닫기 ── */
-        window.openEbookModal = function () {
+        w = Math.floor(w / 2) * 2;
+        h = Math.round(h);
+        return { w: w, h: h };
+      }
+
+      function applySize() {
+        var s = calcSize();
+        wrap.style.width   = s.w + 'px';
+        wrap.style.height  = s.h + 'px';
+        bar.style.width    = s.w + 'px';
+        dotsEl.style.width = s.w + 'px';
+        try {
+          var cw = frame.contentWindow;
+          if (cw && cw.jQuery) cw.jQuery(cw).trigger('resize');
+        } catch (e) {}
+      }
+
+      /* ── 페이지 이동 ── */
+      function ebookTurn(page) {
+        try {
+          var $ = frame.contentWindow.jQuery;
+          if (!$) return;
+          var book = $('.magazine', frame.contentDocument);
+          if (!book.length || !book.turn('is')) return;
+          book.turn('page', page);
+          _cur = book.turn('page');
+          syncUI(_cur);
+        } catch (e) {}
+      }
+
+      function syncUI(page) {
+        var em = infoEl.querySelector('em');
+        if (em) em.textContent = page;
+        prevBtn.classList.toggle('is-dim', page <= 1);
+        nextBtn.classList.toggle('is-dim', page >= TOTAL_PAGES);
+        updateDots(page);
+      }
+
+      function updateFromBook() {
+        try {
+          var $ = frame.contentWindow.jQuery;
+          if (!$) return;
+          var book = $('.magazine', frame.contentDocument);
+          if (!book.length) return;
+          _cur = book.turn('page');
+          syncUI(_cur);
+        } catch (e) {}
+      }
+
+      /* ── 열기 ── */
+      window.openEbookModal = function () {
+        buildDots();
+        modal.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+        _cur = 1;
+        requestAnimationFrame(function () {
+          applySize();
+          syncUI(1);
+          requestAnimationFrame(function () {
+            modal.classList.add('is-visible');
+          });
+        });
+        frame.src = './index_ebook.html';
+        frame.onload = function () {
+          setTimeout(function () {
+            updateFromBook();
             applySize();
-            frame.src = './index_ebook.html';
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            info.textContent = '1 / ' + TOTAL_PAGES;
-            _currentPage = 1;
-
-            // iframe 로드 후 페이지 정보 갱신
-            frame.onload = function () {
-                setTimeout(function () {
-                    updateInfo();
-                    applySize();
-                }, 600);
-                // turn.js turned 이벤트 후킹
-                try {
-                    var $ = frame.contentWindow.jQuery;
-                    if ($) {
-                        $('.magazine', frame.contentDocument).bind('turned', function () {
-                            updateInfo();
-                        });
-                    }
-                } catch(e) {}
-            };
+            try {
+              var $ = frame.contentWindow.jQuery;
+              if ($) {
+                $('.magazine', frame.contentDocument).bind('turned', function () {
+                  updateFromBook();
+                });
+              }
+            } catch (e) {}
+          }, 600);
         };
+      };
 
-        window.closeEbookModal = function () {
-            modal.style.display = 'none';
-            frame.src = '';
-            document.body.style.overflow = '';
-            info.textContent = '— / —';
-            _currentPage = 1;
-        };
+      /* ── 닫기 ── */
+      window.closeEbookModal = function () {
+        modal.classList.remove('is-visible');
+        setTimeout(function () {
+          modal.classList.remove('is-open');
+          frame.src = '';
+          document.body.style.overflow = '';
+          _cur = 1;
+        }, 320);
+      };
 
-        /* ── 리사이즈 ── */
-        window.addEventListener('resize', function () {
-            if (modal.style.display === 'flex') applySize();
-        });
+      /* ── 버튼 이벤트 ── */
+      prevBtn.addEventListener('click', function () {
+        ebookTurn(_cur - 2 < 1 ? 1 : _cur - 2);
+      });
+      nextBtn.addEventListener('click', function () {
+        ebookTurn(_cur + 2 > TOTAL_PAGES ? TOTAL_PAGES : _cur + 2);
+      });
+      closeBtn.addEventListener('click', closeEbookModal);
 
-        /* ── 키보드 ── */
-        document.addEventListener('keydown', function (e) {
-            if (modal.style.display !== 'flex') return;
-            if (e.key === 'Escape')      closeEbookModal();
-            if (e.key === 'ArrowLeft')  { ebookPrev(); e.preventDefault(); }
-            if (e.key === 'ArrowRight') { ebookNext(); e.preventDefault(); }
-        });
+      window.addEventListener('resize', function () {
+        if (modal.classList.contains('is-open')) applySize();
+      });
 
-        /* ── 배경 클릭 닫기 ── */
-        modal.addEventListener('click', function (e) {
-            if (e.target === modal) closeEbookModal();
-        });
+      document.addEventListener('keydown', function (e) {
+        if (!modal.classList.contains('is-open')) return;
+        if (e.key === 'Escape')     closeEbookModal();
+        if (e.key === 'ArrowLeft')  { ebookTurn(_cur - 2 < 1 ? 1 : _cur - 2); e.preventDefault(); }
+        if (e.key === 'ArrowRight') { ebookTurn(_cur + 2 > TOTAL_PAGES ? TOTAL_PAGES : _cur + 2); e.preventDefault(); }
+      });
+
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeEbookModal();
+      });
     })();
     </script>
 
-    <!-- SKETCH MODAL -->
-    <div id="sketchModal" style="display:none; position:fixed; inset:0; background:rgba(10,10,10,0.88); z-index:99999; align-items:center; justify-content:center; flex-direction:column;">
-        <div id="sketchBar" style="
-            display:flex; align-items:center; justify-content:space-between;
-            width:100%; max-width:1400px;
-            padding: 0 12px 10px;
-            gap: 16px;
-        ">
-            <button onclick="sketchPrev()" id="btnSketchPrev" title="이전 페이지 (←)" style="
-                font-family:'Cormorant Garamond',serif;
-                font-size:0.92rem; letter-spacing:0.1em;
-                color:rgba(255,255,255,0.55); background:transparent;
-                border:1px solid rgba(255,255,255,0.18);
-                padding:7px 20px; cursor:pointer;
-                transition:all .22s ease;
-            " onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.55)'"
-               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.18)'">
-                ← PREV
-            </button>
-            <span id="sketchPageInfo" style="font-family:'Cormorant Garamond',serif; font-size:0.88rem; letter-spacing:0.16em; color:rgba(255,255,255,0.4); min-width:80px; text-align:center;">
-                — / —
-            </span>
-            <button onclick="closeSketchModal()" title="닫기 (ESC)" style="
-                font-family:'Cormorant Garamond',serif;
-                font-size:0.92rem; letter-spacing:0.1em;
-                color:rgba(255,255,255,0.55); background:transparent;
-                border:1px solid rgba(255,255,255,0.18);
-                padding:7px 20px; cursor:pointer;
-                transition:all .22s ease;
-                margin-left:auto;
-            " onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.55)'"
-               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.18)'">
-                CLOSE ✕
-            </button>
-            <button onclick="sketchNext()" id="btnSketchNext" title="다음 페이지 (→)" style="
-                font-family:'Cormorant Garamond',serif;
-                font-size:0.92rem; letter-spacing:0.1em;
-                color:rgba(255,255,255,0.55); background:transparent;
-                border:1px solid rgba(255,255,255,0.18);
-                padding:7px 20px; cursor:pointer;
-                transition:all .22s ease;
-            " onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.55)'"
-               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.borderColor='rgba(255,255,255,0.18)'">
-                NEXT →
-            </button>
+
+    <!-- ════════════════════════════════════════════
+         SKETCH MODAL (새로 디자인)
+    ════════════════════════════════════════════ -->
+    <div id="sketchModal" class="kv-modal" aria-modal="true" role="dialog" aria-label="스케치북">
+
+      <div class="kv-bar" id="sketchBar">
+        <button class="kv-btn kv-btn-prev is-dim" id="sketchPrevBtn" aria-label="이전 페이지 (←)">
+          ← <span class="kv-btn-label">PREV</span>
+        </button>
+
+        <div class="kv-page-info" id="sketchPageInfo">
+          <em>1</em>&ensp;<span style="color:rgba(31,31,31,0.22)">/</span>&ensp;<span>4</span>
         </div>
-        <div id="sketchWrap" style="position:relative; overflow:hidden; background:#111;">
-            <iframe id="sketchFrame" src="" style="width:100%; height:100%; border:none; display:block;" allowfullscreen></iframe>
-        </div>
-        <p style="margin-top:10px; font-family:'Cormorant Garamond',serif; font-size:0.78rem; letter-spacing:0.14em; color:rgba(255,255,255,0.22); text-transform:uppercase;">
-            ← → 키 또는 버튼으로 페이지 이동 &nbsp;|&nbsp; ESC 로 닫기
-        </p>
+
+        <button class="kv-close" id="sketchCloseBtn" aria-label="닫기 (ESC)">
+          CLOSE <span class="kv-close-x"></span>
+        </button>
+
+        <button class="kv-btn kv-btn-next" id="sketchNextBtn" aria-label="다음 페이지 (→)">
+          <span class="kv-btn-label">NEXT</span> →
+        </button>
+      </div>
+
+      <div class="kv-stage" id="sketchWrap">
+        <iframe id="sketchFrame" src="" allowfullscreen></iframe>
+      </div>
+
+      <div class="kv-dots" id="sketchDots"></div>
+      <p class="kv-hint">← → 키 또는 버튼으로 페이지 이동 &nbsp;·&nbsp; ESC 닫기</p>
     </div>
 
     <script>
     (function () {
-        var BOOK_W  = 1830;
-        var BOOK_H  = 650.27;
-        var RATIO   = BOOK_W / BOOK_H;
-        var TOTAL_PAGES = 4;
+      var BOOK_W      = 1830;
+      var BOOK_H      = 650.27;
+      var RATIO       = BOOK_W / BOOK_H;
+      var TOTAL_PAGES = 4;
 
-        var modal   = document.getElementById('sketchModal');
-        var wrap    = document.getElementById('sketchWrap');
-        var frame   = document.getElementById('sketchFrame');
-        var info    = document.getElementById('sketchPageInfo');
-        var _currentPage = 1;
+      var modal    = document.getElementById('sketchModal');
+      var wrap     = document.getElementById('sketchWrap');
+      var frame    = document.getElementById('sketchFrame');
+      var bar      = document.getElementById('sketchBar');
+      var infoEl   = document.getElementById('sketchPageInfo');
+      var prevBtn  = document.getElementById('sketchPrevBtn');
+      var nextBtn  = document.getElementById('sketchNextBtn');
+      var closeBtn = document.getElementById('sketchCloseBtn');
+      var dotsEl   = document.getElementById('sketchDots');
+      var _cur = 1;
 
-        function calcSize() {
-            var vw = window.innerWidth  * 0.95;
-            var vh = window.innerHeight * 0.78;
-            var w, h;
-            if (vw / vh > RATIO) { h = vh; w = h * RATIO; }
-            else { w = vw; h = w / RATIO; }
-            w = Math.floor(w / 2) * 2;
-            h = Math.round(h);
-            return { w: w, h: h };
+      function buildDots() {
+        dotsEl.innerHTML = '';
+        var views = Math.ceil(TOTAL_PAGES / 2) + 1;
+        for (var i = 1; i <= views; i++) {
+          var d = document.createElement('button');
+          d.className = 'kv-dot' + (i === 1 ? ' is-active' : '');
+          d.setAttribute('aria-label', i + '번째 뷰');
+          d.addEventListener('click', (function (v) {
+            return function () { sketchTurn(v <= 1 ? 1 : (v - 1) * 2); };
+          })(i));
+          dotsEl.appendChild(d);
         }
+      }
 
-        function applySize() {
-            var s = calcSize();
-            wrap.style.width  = s.w + 'px';
-            wrap.style.height = s.h + 'px';
-            try {
-                var doc = frame.contentWindow;
-                if (doc && doc.jQuery) doc.jQuery(doc).trigger('resize');
-            } catch(e) {}
-        }
+      function updateDots(page) {
+        var view = page <= 1 ? 0 : Math.ceil((page - 1) / 2);
+        dotsEl.querySelectorAll('.kv-dot').forEach(function (d, i) {
+          d.classList.toggle('is-active', i === view);
+        });
+      }
 
-        function sketchTurn(page) {
-            try {
-                var $ = frame.contentWindow.jQuery;
-                if (!$) return;
-                var book = $('.magazine', frame.contentDocument);
-                if (!book.length || !book.turn('is')) return;
-                book.turn('page', page);
-                _currentPage = book.turn('page');
-                updateInfo();
-            } catch(e) {}
-        }
+      function calcSize() {
+        var barH  = bar.offsetHeight  || 52;
+        var dotsH = dotsEl.offsetHeight || 20;
+        var hintH = 36;
+        var padV  = 48;
+        var padH  = 32;
+        var avW = window.innerWidth  - padH * 2;
+        var avH = window.innerHeight - barH - dotsH - hintH - padV * 2;
+        var w, h;
+        if (avW / avH > RATIO) { h = avH; w = h * RATIO; }
+        else                    { w = avW; h = w / RATIO; }
+        w = Math.floor(w / 2) * 2;
+        h = Math.round(h);
+        return { w: w, h: h };
+      }
 
-        function updateInfo() {
-            try {
-                var $ = frame.contentWindow.jQuery;
-                if (!$) return;
-                var book = $('.magazine', frame.contentDocument);
-                if (!book.length) return;
-                var p = book.turn('page');
-                var total = book.turn('pages');
-                info.textContent = p + ' / ' + total;
-                _currentPage = p;
-            } catch(e) {}
-        }
+      function applySize() {
+        var s = calcSize();
+        wrap.style.width   = s.w + 'px';
+        wrap.style.height  = s.h + 'px';
+        bar.style.width    = s.w + 'px';
+        dotsEl.style.width = s.w + 'px';
+        try {
+          var cw = frame.contentWindow;
+          if (cw && cw.jQuery) cw.jQuery(cw).trigger('resize');
+        } catch (e) {}
+      }
 
-        window.sketchPrev = function () { sketchTurn(_currentPage - 2 < 1 ? 1 : _currentPage - 2); };
-        window.sketchNext = function () { sketchTurn(_currentPage + 2 > TOTAL_PAGES ? TOTAL_PAGES : _currentPage + 2); };
+      function sketchTurn(page) {
+        try {
+          var $ = frame.contentWindow.jQuery;
+          if (!$) return;
+          var book = $('.magazine', frame.contentDocument);
+          if (!book.length || !book.turn('is')) return;
+          book.turn('page', page);
+          _cur = book.turn('page');
+          syncUI(_cur);
+        } catch (e) {}
+      }
 
-        window.openSketchModal = function () {
+      function syncUI(page) {
+        var em = infoEl.querySelector('em');
+        if (em) em.textContent = page;
+        prevBtn.classList.toggle('is-dim', page <= 1);
+        nextBtn.classList.toggle('is-dim', page >= TOTAL_PAGES);
+        updateDots(page);
+      }
+
+      function updateFromBook() {
+        try {
+          var $ = frame.contentWindow.jQuery;
+          if (!$) return;
+          var book = $('.magazine', frame.contentDocument);
+          if (!book.length) return;
+          _cur = book.turn('page');
+          syncUI(_cur);
+        } catch (e) {}
+      }
+
+      window.openSketchModal = function () {
+        buildDots();
+        modal.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+        _cur = 1;
+        requestAnimationFrame(function () {
+          applySize();
+          syncUI(1);
+          requestAnimationFrame(function () {
+            modal.classList.add('is-visible');
+          });
+        });
+        frame.src = './index_sketch.html';
+        frame.onload = function () {
+          setTimeout(function () {
+            updateFromBook();
             applySize();
-            frame.src = './index_sketch.html';
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            info.textContent = '1 / ' + TOTAL_PAGES;
-            _currentPage = 1;
-            frame.onload = function () {
-                setTimeout(function () { updateInfo(); applySize(); }, 600);
-                try {
-                    var $ = frame.contentWindow.jQuery;
-                    if ($) {
-                        $('.magazine', frame.contentDocument).bind('turned', function () { updateInfo(); });
-                    }
-                } catch(e) {}
-            };
+            try {
+              var $ = frame.contentWindow.jQuery;
+              if ($) {
+                $('.magazine', frame.contentDocument).bind('turned', function () {
+                  updateFromBook();
+                });
+              }
+            } catch (e) {}
+          }, 600);
         };
+      };
 
-        window.closeSketchModal = function () {
-            modal.style.display = 'none';
-            frame.src = '';
-            document.body.style.overflow = '';
-            info.textContent = '— / —';
-            _currentPage = 1;
-        };
+      window.closeSketchModal = function () {
+        modal.classList.remove('is-visible');
+        setTimeout(function () {
+          modal.classList.remove('is-open');
+          frame.src = '';
+          document.body.style.overflow = '';
+          _cur = 1;
+        }, 320);
+      };
 
-        window.addEventListener('resize', function () {
-            if (modal.style.display === 'flex') applySize();
-        });
+      prevBtn.addEventListener('click', function () {
+        sketchTurn(_cur - 2 < 1 ? 1 : _cur - 2);
+      });
+      nextBtn.addEventListener('click', function () {
+        sketchTurn(_cur + 2 > TOTAL_PAGES ? TOTAL_PAGES : _cur + 2);
+      });
+      closeBtn.addEventListener('click', closeSketchModal);
 
-        document.addEventListener('keydown', function (e) {
-            if (modal.style.display !== 'flex') return;
-            if (e.key === 'Escape')      closeSketchModal();
-            if (e.key === 'ArrowLeft')  { sketchPrev(); e.preventDefault(); }
-            if (e.key === 'ArrowRight') { sketchNext(); e.preventDefault(); }
-        });
+      window.addEventListener('resize', function () {
+        if (modal.classList.contains('is-open')) applySize();
+      });
 
-        modal.addEventListener('click', function (e) {
-            if (e.target === modal) closeSketchModal();
-        });
+      document.addEventListener('keydown', function (e) {
+        if (!modal.classList.contains('is-open')) return;
+        if (e.key === 'Escape')     closeSketchModal();
+        if (e.key === 'ArrowLeft')  { sketchTurn(_cur - 2 < 1 ? 1 : _cur - 2); e.preventDefault(); }
+        if (e.key === 'ArrowRight') { sketchTurn(_cur + 2 > TOTAL_PAGES ? TOTAL_PAGES : _cur + 2); e.preventDefault(); }
+      });
+
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeSketchModal();
+      });
     })();
     </script>
+
 
     <!-- FOOTER -->
     <footer class="section" id="footer" style="position:relative; overflow:hidden;">
@@ -794,7 +1027,6 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="custom.js"></script>
     <script>
-        /* Instagram embed 명시적 초기화 — async 로드 후 process() 보장 */
         (function () {
             var s = document.createElement('script');
             s.src = 'https://www.instagram.com/embed.js';
@@ -809,18 +1041,11 @@
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const targetId = this.getAttribute('href');
-
-        // "#"만 있는 경우는 무시 (이미 위에서 막았으니까 안전)
         if (targetId === '#') return;
-
         const target = document.querySelector(targetId);
-
         if (target) {
             e.preventDefault();
-
-            target.scrollIntoView({
-                behavior: 'smooth'
-            });
+            target.scrollIntoView({ behavior: 'smooth' });
         }
     });
 });
@@ -832,7 +1057,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         var canvas = document.getElementById(canvasId);
         if (!canvas) return;
         var ctx = canvas.getContext('2d');
-        var W, H, particles = [], lines = [];
+        var W, H, particles = [];
 
         function resize() {
             var rect = canvas.parentElement.getBoundingClientRect();
@@ -847,8 +1072,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             this.vy = (Math.random() - 0.5) * 0.28;
         }
         Particle.prototype.update = function () {
-            this.x += this.vx;
-            this.y += this.vy;
+            this.x += this.vx; this.y += this.vy;
             if (this.x < 0 || this.x > W) this.vx *= -1;
             if (this.y < 0 || this.y > H) this.vy *= -1;
         };
@@ -859,9 +1083,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         var maxDist = 160;
         function draw() {
             ctx.clearRect(0, 0, W, H);
-            for (var i = 0; i < particles.length; i++) {
-                particles[i].update();
-            }
+            for (var i = 0; i < particles.length; i++) particles[i].update();
             for (var i = 0; i < particles.length; i++) {
                 for (var j = i + 1; j < particles.length; j++) {
                     var dx = particles[i].x - particles[j].x;
@@ -880,30 +1102,25 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             }
             requestAnimationFrame(draw);
         }
-
         window.addEventListener('resize', resize);
         draw();
     }
-
-    // contact section은 높이가 확보된 뒤 초기화
     window.addEventListener('load', function () {
         initThreadCanvas('threadCanvas', 55);
         initThreadCanvas('footerThreadCanvas', 30);
     });
 })();
+
 /* ── Mobile Nav Toggle ── */
 (function () {
     var toggle = document.getElementById('navToggle');
     var menu   = document.getElementById('navMenu');
     if (!toggle || !menu) return;
-
     toggle.addEventListener('click', function () {
         var isOpen = menu.classList.toggle('open');
         toggle.classList.toggle('open', isOpen);
         toggle.setAttribute('aria-label', isOpen ? '메뉴 닫기' : '메뉴 열기');
     });
-
-    // nav 링크 클릭 시 메뉴 닫기
     menu.querySelectorAll('a').forEach(function (a) {
         a.addEventListener('click', function () {
             menu.classList.remove('open');
@@ -911,6 +1128,12 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         });
     });
 })();
+document.querySelectorAll('a[href="#"]').forEach(function(el){
+  el.addEventListener('click', function(e){
+    e.preventDefault();
+  });
+});
 </script>
 
+</body>
 </html>
